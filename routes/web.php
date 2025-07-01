@@ -55,6 +55,10 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     // Other manager-only routes
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
     Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
+    Route::get('/allergie/{family}', [AllergyController::class, 'show'])->name('allergie.show');
+    Route::get('/allergie/{allergy}/edit', [AllergyController::class, 'edit'])->name('allergie.edit');
+    Route::put('/allergie/{allergy}', [AllergyController::class, 'update'])->name('allergie.update');
+
 });
 
 // EMPLOYEE routes
