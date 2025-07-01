@@ -1,0 +1,282 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class PersonSeeder extends Seeder
+{
+    public function run(): void
+    {
+        DB::table('people')->insert([
+            [
+                'id' => 1,
+                'family_id' => null,
+                'Voornaam' => 'Hans',
+                'Tussenvoegsel' => 'van',
+                'Achternaam' => 'Leeuwen',
+                'Geboortedatum' => '1958-02-12',
+                'TypePersoon' => 'Manager',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 2,
+                'family_id' => null,
+                'Voornaam' => 'Jan',
+                'Tussenvoegsel' => 'van der',
+                'Achternaam' => 'Sluijs',
+                'Geboortedatum' => '1993-04-30',
+                'TypePersoon' => 'Medewerker',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 3,
+                'family_id' => null,
+                'Voornaam' => 'Herman',
+                'Tussenvoegsel' => 'den',
+                'Achternaam' => 'Duiker',
+                'Geboortedatum' => '1989-08-30',
+                'TypePersoon' => 'Vrijwilliger',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 4,
+                'family_id' => 1,
+                'Voornaam' => 'Johan',
+                'Tussenvoegsel' => 'van',
+                'Achternaam' => 'Zevenhuizen',
+                'Geboortedatum' => '1990-05-20',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => true,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 5,
+                'family_id' => 1,
+                'Voornaam' => 'Sarah',
+                'Tussenvoegsel' => 'den',
+                'Achternaam' => 'Dolder',
+                'Geboortedatum' => '1985-03-23',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 6,
+                'family_id' => 1,
+                'Voornaam' => 'Theo',
+                'Tussenvoegsel' => 'van',
+                'Achternaam' => 'Zevenhuizen',
+                'Geboortedatum' => '2015-03-08',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 7,
+                'family_id' => 1,
+                'Voornaam' => 'Jantien',
+                'Tussenvoegsel' => 'van',
+                'Achternaam' => 'Zevenhuizen',
+                'Geboortedatum' => '2016-09-20',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 8,
+                'family_id' => 2,
+                'Voornaam' => 'Arjan',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Bergkamp',
+                'Geboortedatum' => '1968-07-12',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => true,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 9,
+                'family_id' => 2,
+                'Voornaam' => 'Janneke',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Sanders',
+                'Geboortedatum' => '1969-05-11',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 10,
+                'family_id' => 2,
+                'Voornaam' => 'Stein',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Bergkamp',
+                'Geboortedatum' => '2009-02-02',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 11,
+                'family_id' => 2,
+                'Voornaam' => 'Judith',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Bergkamp',
+                'Geboortedatum' => '2022-02-05',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 12,
+                'family_id' => 3,
+                'Voornaam' => 'Mazin',
+                'Tussenvoegsel' => 'van',
+                'Achternaam' => 'Vliet',
+                'Geboortedatum' => '1968-08-18',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 13,
+                'family_id' => 3,
+                'Voornaam' => 'Selma',
+                'Tussenvoegsel' => 'van de',
+                'Achternaam' => 'Heuvel',
+                'Geboortedatum' => '1965-09-04',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => true,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 14,
+                'family_id' => 4,
+                'Voornaam' => 'Eva',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Scherder',
+                'Geboortedatum' => '2000-04-07',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => true,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 15,
+                'family_id' => 4,
+                'Voornaam' => 'Felicia',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Scherder',
+                'Geboortedatum' => '2021-11-29',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 16,
+                'family_id' => 4,
+                'Voornaam' => 'Devin',
+                'Tussenvoegsel' => null,
+                'Achternaam' => 'Scherder',
+                'Geboortedatum' => '2024-03-01',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 17,
+                'family_id' => 5,
+                'Voornaam' => 'Frieda',
+                'Tussenvoegsel' => 'de',
+                'Achternaam' => 'Jong',
+                'Geboortedatum' => '1980-09-04',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => true,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 18,
+                'family_id' => 5,
+                'Voornaam' => 'Simeon',
+                'Tussenvoegsel' => 'de',
+                'Achternaam' => 'Jong',
+                'Geboortedatum' => '2018-05-23',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => false,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ],
+            [
+                'id' => 19,
+                'family_id' => 6,
+                'Voornaam' => 'Hanna',
+                'Tussenvoegsel' => 'van der',
+                'Achternaam' => 'Berg',
+                'Geboortedatum' => '1999-09-09',
+                'TypePersoon' => 'Klant',
+                'IsVertegenwoordiger' => true,
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => Carbon::now(),
+                'DatumGewijzigd' => null
+            ]
+        ]);
+    }
+}
