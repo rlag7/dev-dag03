@@ -5,99 +5,51 @@
 @endphp
 
     <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+    <title>Homepage Voedselbank Maaskantje</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
-<div class="flex min-h-screen">
+<body class="bg-gray-100 text-black">
+<div class="max-w-4xl mx-auto p-6">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex flex-col justify-between">
-        <div class="p-6">
-            <!-- Profile -->
-            <div class="flex items-center space-x-3 mb-10">
-                @if ($user->profile_photo_path)
-                    <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="{{ $user->name }}" class="w-12 h-12 rounded-full object-cover">
-                @else
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random&color=fff" class="w-12 h-12 rounded-full object-cover">
-                @endif
-                <div>
-                    <div class="font-semibold">{{ $user->name }}</div>
-                    <div class="text-sm text-gray-500 capitalize">{{ $role }}</div>
-                </div>
-            </div>
+    {{-- Titel gecentreerd --}}
+    <h1 class="text-3xl font-bold text-center mb-6">
+        Homepage Voedselbank Maaskantje
+    </h1>
 
-            <!-- Navigation by Role -->
-            <nav class="space-y-2">
-                @if ($user->hasRole('admin'))
-                    <x-dashboard-link route="admin.users.index" label="Gebruikers">
-                        <i class="fas fa-users mr-2"></i>
-                    </x-dashboard-link>
+    {{-- Inline blauwe links per rol --}}
+    <div class="flex flex-wrap justify-center gap-6 text-lg mb-8">
+        @if ($user->hasRole('admin'))
+            <a href="{{ route('admin.users.index') }}" class="text-blue-600 hover:underline">Gebruikers</a>
 
-                @elseif ($user->hasRole('manager'))
+        @elseif ($user->hasRole('manager'))
+            <a href="{{ route('manager.allergie.index') }}" class="text-blue-600 hover:underline">Allergie Overzicht</a>
+            <a href="{{ route('manager.customers.index') }}" class="text-blue-600 hover:underline">Klant Overzicht</a>
+            <a href="{{ route('manager.foodpackage.index') }}" class="text-blue-600 hover:underline">Voedselpakket Overzicht</a>
+            <a href="{{ route('manager.supplier.index') }}" class="text-blue-600 hover:underline">Leverancier Overzicht</a>
 
-                    <x-dashboard-link route="manager.allergie.index" label="Allergie Overzicht">
-                        <i class="fas fa-notes-medical mr-2"></i>
-                    </x-dashboard-link>
+        @elseif ($user->hasRole('employee'))
+            <a href="{{ route('employee.customers.index') }}" class="text-blue-600 hover:underline">Klant Overzicht</a>
+            <a href="{{ route('employee.supplier.index') }}" class="text-blue-600 hover:underline">Leverancier Overzicht</a>
 
-                    <x-dashboard-link route="manager.customers.index" label="Klant Overzicht">
-                        <i class="fas fa-user-friends mr-2"></i>
-                    </x-dashboard-link>
+        @elseif ($user->hasRole('volunteer'))
+            <a href="{{ route('volunteer.customers.index') }}" class="text-blue-600 hover:underline">Klant Overzicht</a>
+            <a href="{{ route('volunteer.foodpackage.index') }}" class="text-blue-600 hover:underline">Voedselpakket Overzicht</a>
+        @endif
+    </div>
 
-                    <x-dashboard-link route="manager.foodpackage.index" label="Voedselpakket Overzicht">
-                        <i class="fas fa-box-open mr-2"></i>
-                    </x-dashboard-link>
+    {{-- Logout --}}
+    <div class="text-center">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="text-red-600 hover:underline text-base">
+                Logout
+            </button>
+        </form>
+    </div>
 
-                    <x-dashboard-link route="manager.supplier.index" label="Leverancier Overzicht">
-                        <i class="fas fa-truck mr-2"></i>
-                    </x-dashboard-link>
-
-                @elseif ($user->hasRole('employee'))
-
-                    <x-dashboard-link route="employee.customers.index" label="Klant Overzicht">
-                        <i class="fas fa-user-friends mr-2"></i>
-                    </x-dashboard-link>
-
-                    <x-dashboard-link route="employee.supplier.index" label="Leverancier Overzicht">
-                        <i class="fas fa-truck mr-2"></i>
-                    </x-dashboard-link>
-
-                @elseif ($user->hasRole('volunteer'))
-
-                    <x-dashboard-link route="volunteer.customers.index" label="Klant Overzicht">
-                        <i class="fas fa-user-friends mr-2"></i>
-                    </x-dashboard-link>
-
-                    <x-dashboard-link route="volunteer.foodpackage.index" label="Voedselpakket Overzicht">
-                        <i class="fas fa-box-open mr-2"></i>
-                    </x-dashboard-link>
-
-                @endif
-            </nav>
-        </div>
-
-        <!-- Bottom Links -->
-        <div class="p-6 space-y-4">
-            <a href="/" target="_blank" class="flex items-center text-blue-700 hover:underline">
-                <i class="fas fa-globe mr-2"></i> Live Website
-            </a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="flex items-center text-red-600 hover:underline">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 p-8 overflow-y-auto">
-        @yield('dashboard-content')
-    </main>
 </div>
 </body>
 </html>

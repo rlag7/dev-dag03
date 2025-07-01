@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductSupplierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -28,15 +29,30 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 });
 
+// Customer managing routes
+Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
+    Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
+    Route::resource('customers', CustomerController::class);
+});
+
 // MANAGER routes
 Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-    Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
-    Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
-    Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
-    Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
 
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
+    Route::post('/supplier/filter', [SupplierController::class, 'filter'])->name('supplier.filter');
+    Route::get('/supplier/{id}', [SupplierController::class, 'show'])->name('supplier.show');
+    Route::get('/supplier/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
+
+    // ✅ Correcte edit en update routes voor producten per leverancier
+    Route::get('/supplier/{supplier}/product/{product}/edit', [ProductSupplierController::class, 'edit'])
+        ->name('product_supplier.edit');
+    Route::put('/supplier/{supplier}/product/{product}', [ProductSupplierController::class, 'update'])
+        ->name('product_supplier.update');
+
+
+
+    // Other manager-only routes
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
     Route::get('/foodpackage/{id}/edit', [FoodPackageController::class, 'edit'])->name('foodpackage.edit');
     Route::put('/foodpackage/{id}', [FoodPackageController::class, 'update'])->name('foodpackage.update');
