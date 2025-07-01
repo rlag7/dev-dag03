@@ -48,8 +48,19 @@ class FoodpackageController extends Controller
      */
     public function edit(string $id)
     {
-        
+        $foodpackage = FoodPackage::with('family')->findOrFail($id);
+        $families = Family::all();
+        $diets = Diet::all();
+        $products = Product::all();
+
+        return view('foodpackage.edit', [
+            'foodpackage' => $foodpackage,
+            'families' => $families,
+            'diets' => $diets,
+            'products' => $products,
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.
