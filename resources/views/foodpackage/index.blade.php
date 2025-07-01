@@ -21,19 +21,25 @@
         </div>
 
         {{-- Filter op Eetwens --}}
-       
-            <label for="eetwens" class="text-sm font-medium">Filter op Eetwens:</label>
-            <select name="eetwens" id="eetwens" class="border rounded px-3 py-2">
+        <form method="GET" class="mb-4 flex gap-3 items-center">
+            <label for="eetwens">Filter op Eetwens:</label>
+            <select name="eetwens" id="eetwens" class="border px-3 py-2 rounded">
                 <option value="">-- Alle eetwensen --</option>
-                {{-- Vervang dit met dynamische eetwensen als nodig --}}
-                <option value="vegetarisch" {{ request('eetwens') == 'vegetarisch' ? 'selected' : '' }}>Vegetarisch</option>
-                <option value="glutenvrij" {{ request('eetwens') == 'glutenvrij' ? 'selected' : '' }}>Glutenvrij</option>
-                <option value="halal" {{ request('eetwens') == 'halal' ? 'selected' : '' }}>Halal</option>
+                @foreach($diets as $diet)
+                    <option value="{{ $diet->id }}" {{ $dietId == $diet->id ? 'selected' : '' }}>
+                        {{ $diet->Naam }}
+                    </option>
+                @endforeach
             </select>
-            <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">
-                Filter
-            </button>
+            <button class="bg-gray-700 text-white px-4 py-2 rounded">Filter</button>
         </form>
+
+        {{-- Geen gezinnen voor geselecteerde dieet --}}
+        @if($dietId && $families->isEmpty())
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                Er zijn geen gezinnen bekend die de geselecteerde eetwens hebben.
+            </div>
+        @endif
 
         {{-- Tabel --}}
         <div class="overflow-x-auto">
@@ -50,7 +56,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @forelse($pakketten as $pakket)
+                @forelse($pakketten->whereIn('family.id', $families->pluck('id')) as $pakket)
                     @php
                         $family = $pakket->family;
                     @endphp
@@ -63,18 +69,18 @@
                             <td class="px-4 py-2 border">{{ $family->AantalBabys }}</td>
                             <td class="px-4 py-2 border">
                                 @php
-                             $vertegenwoordiger = $family->people->firstWhere('IsVertegenwoordiger', true);
-                        @endphp
-                            @if($vertegenwoordiger)
-                                {{ $vertegenwoordiger->Voornaam }}
-                                {{ $vertegenwoordiger->Tussenvoegsel ? $vertegenwoordiger->Tussenvoegsel : '' }}
-                                {{ $vertegenwoordiger->Achternaam }}
-                            @else
-                                -
-                            @endif
+                                    $vertegenwoordiger = $family->people->firstWhere('IsVertegenwoordiger', true);
+                                @endphp
+                                @if($vertegenwoordiger)
+                                    {{ $vertegenwoordiger->Voornaam }}
+                                    {{ $vertegenwoordiger->Tussenvoegsel ? $vertegenwoordiger->Tussenvoegsel . ' ' : '' }}
+                                    {{ $vertegenwoordiger->Achternaam }}
+                                @else
+                                    -
+                                @endif
                             </td>
                             <td class="px-4 py-2 border text-center">
-                           
+                                {{-- Leeg gelaten zoals gevraagd --}}
                             </td>
                         </tr>
                     @endif
