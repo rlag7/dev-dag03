@@ -1,121 +1,191 @@
+@php
+    $rep = $customer->representative->first();
+    $contact = $customer->contact->first();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-semibold text-green-700 underline">
-            Wijzig Klant Details {{ $customer->representative->first()->Voornaam ?? '' }} {{ $customer->representative->first()->Achternaam ?? '' }}
+        <h2 class="text-2xl font-semibold text-blue-700 underline">
+            Wijzig Klant Details {{ $rep->Voornaam ?? '-' }} {{ $rep->Achternaam ?? '-' }}
         </h2>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded p-6 mt-6">
-        {{-- Success Message --}}
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded p-6 mt-6">
 
-        {{-- Error Message --}}
+        {{-- Foutmelding --}}
         @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+            <div x-data="{ show: true }" x-show="show"
+                 x-init="setTimeout(() => show = false, 5000)"
+                 class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
                 {{ session('error') }}
             </div>
         @endif
 
-        <form action="{{ route('customers.update', $customer->id) }}" method="POST" class="space-y-4">
+        {{-- Succesmelding --}}
+        @if(session('success'))
+            <div x-data="{ show: true }" x-show="show"
+                 x-init="setTimeout(() => show = false, 3000)"
+                 class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Validatiefouten bovenaan --}}
+        @if($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('customers.update', $customer->id) }}">
             @csrf
             @method('PUT')
 
-            {{-- Voornaam --}}
-            <div>
-                <label class="font-bold block">Voornaam</label>
-                <input type="text" name="Voornaam" value="{{ old('Voornaam', $customer->representative->first()->Voornaam ?? '') }}" class="w-full border rounded px-3 py-2">
+            <div class="space-y-4">
+                {{-- Voornaam --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Voornaam</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Voornaam" value="{{ old('Voornaam', $rep->Voornaam ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Voornaam') border-red-500 @enderror">
+                        @error('Voornaam') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Tussenvoegsel --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Tussenvoegsel</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Tussenvoegsel" value="{{ old('Tussenvoegsel', $rep->Tussenvoegsel ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Tussenvoegsel') border-red-500 @enderror">
+                        @error('Tussenvoegsel') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Achternaam --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Achternaam</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Achternaam" value="{{ old('Achternaam', $rep->Achternaam ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Achternaam') border-red-500 @enderror">
+                        @error('Achternaam') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Geboortedatum --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Geboortedatum</label>
+                    <div class="w-1/2">
+                        <input type="date" name="Geboortedatum" value="{{ old('Geboortedatum', $rep->Geboortedatum ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Geboortedatum') border-red-500 @enderror">
+                        @error('Geboortedatum') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Type Persoon (readonly) --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Type Persoon</label>
+                    <div class="w-1/2">
+                        <input type="text" disabled
+                               value="@if($rep->TypePersoon === 'manager') Manager @elseif($rep->TypePersoon === 'employee') Werknemer @elseif($rep->TypePersoon === 'volunteer') Vrijwilliger @else - @endif"
+                               class="w-full bg-gray-100 border rounded px-3 py-2 text-gray-700">
+                        <input type="hidden" name="TypePersoon" value="{{ $rep->TypePersoon }}">
+                    </div>
+                </div>
+
+                {{-- Vertegenwoordiger (readonly) --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Vertegenwoordiger</label>
+                    <div class="w-1/2">
+                        <input type="text" disabled value="{{ $rep->IsVertegenwoordiger ? 'Ja' : 'Nee' }}"
+                               class="w-full bg-gray-100 border rounded px-3 py-2 text-gray-700">
+                        <input type="hidden" name="IsVertegenwoordiger" value="{{ $rep->IsVertegenwoordiger }}">
+                    </div>
+                </div>
+
+                {{-- Straatnaam --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Straatnaam</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Straat" value="{{ old('Straat', $contact->Straat ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Straat') border-red-500 @enderror">
+                        @error('Straat') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Huisnummer --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Huisnummer</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Huisnummer" value="{{ old('Huisnummer', $contact->Huisnummer ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Huisnummer') border-red-500 @enderror">
+                        @error('Huisnummer') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Toevoeging --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Toevoeging</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Toevoeging" value="{{ old('Toevoeging', $contact->Toevoeging ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Toevoeging') border-red-500 @enderror">
+                        @error('Toevoeging') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Postcode --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Postcode</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Postcode" value="{{ old('Postcode', $contact->Postcode ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Postcode') border-red-500 @enderror">
+                        @error('Postcode') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Woonplaats --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Woonplaats</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Woonplaats" value="{{ old('Woonplaats', $contact->Woonplaats ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Woonplaats') border-red-500 @enderror">
+                        @error('Woonplaats') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Email --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">E-mail</label>
+                    <div class="w-1/2">
+                        <input type="email" name="Email" value="{{ old('Email', $contact->Email ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Email') border-red-500 @enderror">
+                        @error('Email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Mobiel --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Mobiel</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Mobiel" value="{{ old('Mobiel', $contact->Mobiel ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Mobiel') border-red-500 @enderror">
+                        @error('Mobiel') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
             </div>
 
-            {{-- Tussenvoegsel --}}
-            <div>
-                <label class="font-bold block">Tussenvoegsel</label>
-                <input type="text" name="Tussenvoegsel" value="{{ old('Tussenvoegsel', $customer->representative->first()->Tussenvoegsel ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Achternaam --}}
-            <div>
-                <label class="font-bold block">Achternaam</label>
-                <input type="text" name="Achternaam" value="{{ old('Achternaam', $customer->representative->first()->Achternaam ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Geboortedatum --}}
-            <div>
-                <label class="font-bold block">Geboortedatum</label>
-                <input type="date" name="Geboortedatum" value="{{ old('Geboortedatum', $customer->representative->first()->Geboortedatum ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Type Persoon --}}
-            <div>
-                <label class="font-bold block">Type Persoon</label>
-                <input type="text" name="TypePersoon" value="{{ old('TypePersoon', $customer->representative->first()->TypePersoon ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Vertegenwoordiger --}}
-            <div>
-                <label class="font-bold block">Vertegenwoordiger</label>
-                <select name="IsVertegenwoordiger" class="w-full border rounded px-3 py-2">
-                    <option value="1" {{ old('IsVertegenwoordiger', $customer->representative->first()->IsVertegenwoordiger ?? '') == 1 ? 'selected' : '' }}>Ja</option>
-                    <option value="0" {{ old('IsVertegenwoordiger', $customer->representative->first()->IsVertegenwoordiger ?? '') == 0 ? 'selected' : '' }}>Nee</option>
-                </select>
-            </div>
-
-            {{-- Straatnaam --}}
-            <div>
-                <label class="font-bold block">Straatnaam</label>
-                <input type="text" name="Straat" value="{{ old('Straat', $customer->contact->first()->Straat ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Huisnummer --}}
-            <div>
-                <label class="font-bold block">Huisnummer</label>
-                <input type="text" name="Huisnummer" value="{{ old('Huisnummer', $customer->contact->first()->Huisnummer ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Toevoeging --}}
-            <div>
-                <label class="font-bold block">Toevoeging</label>
-                <input type="text" name="Toevoeging" value="{{ old('Toevoeging', $customer->contact->first()->Toevoeging ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Postcode --}}
-            <div>
-                <label class="font-bold block">Postcode</label>
-                <input type="text" name="Postcode" value="{{ old('Postcode', $customer->contact->first()->Postcode ?? '') }}" class="w-full border rounded px-3 py-2 @error('Postcode') border-red-500 @enderror">
-                @error('Postcode')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Woonplaats --}}
-            <div>
-                <label class="font-bold block">Woonplaats</label>
-                <input type="text" name="Woonplaats" value="{{ old('Woonplaats', $customer->contact->first()->Woonplaats ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- E-mail --}}
-            <div>
-                <label class="font-bold block">E-mail</label>
-                <input type="email" name="Email" value="{{ old('Email', $customer->contact->first()->Email ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Mobiel --}}
-            <div>
-                <label class="font-bold block">Mobiel</label>
-                <input type="text" name="Mobiel" value="{{ old('Mobiel', $customer->contact->first()->Mobiel ?? '') }}" class="w-full border rounded px-3 py-2">
-            </div>
-
-            {{-- Buttons --}}
+            {{-- Actieknoppen --}}
             <div class="flex justify-between mt-6">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow">
                     Wijzig Klant Details
                 </button>
                 <div class="space-x-2">
-                    <a href="{{ route('customers.show', $customer->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">terug</a>
-                    <a href="{{ route('dashboard') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">home</a>
+                    <a href="{{ route('customers.show', $customer->id) }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Terug</a>
+                    <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Home</a>
                 </div>
             </div>
         </form>
