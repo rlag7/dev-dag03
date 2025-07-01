@@ -39,6 +39,8 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
     Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
+    Route::get('/allergie/{family}', [AllergyController::class, 'show'])->name('allergie.show');
+
 });
 
 // EMPLOYEE routes

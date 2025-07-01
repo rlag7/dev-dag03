@@ -10,7 +10,7 @@ class AllergyPerson extends Pivot
 
     protected $fillable = [
         'allergy_id',
-        'persoon_id',
+        'person_id',
         'IsActief',
         'Opmerking',
         'DatumAangemaakt',
