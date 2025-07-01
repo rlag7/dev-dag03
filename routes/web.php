@@ -3,14 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\AllergyController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\FoodpackageController;
+use App\Http\Controllers\CustomerController;
 
-// Dashboard
-Route::get('/', fn() => view('welcome'));
-Route::get('/dashboard', fn() => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Profiel
 Route::middleware('auth')->group(function () {
@@ -24,18 +21,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 });
 
-// MANAGER routes
-Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
-    Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
+// Shared customer routes for all roles
+Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
+    // Customer overview and filtering
+    Route::get('/clients', [CustomerController::class, 'index'])->name('clients.index');
+    Route::post('/clients/filter', [CustomerController::class, 'filter'])->name('clients.filter');
 
-    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
-    Route::post('/clients/filter', [ClientController::class, 'filter'])->name('clients.filter');
-    Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
-    Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
-    Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
+    // View customer details
+    Route::get('/clients/{id}', [CustomerController::class, 'show'])->name('clients.show');
 
-    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
-    Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
+    // Edit customer
+    Route::get('/clients/{id}/edit', [CustomerController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/{id}', [CustomerController::class, 'update'])->name('clients.update');
 });
 
 // EMPLOYEE routes
