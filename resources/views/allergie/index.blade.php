@@ -4,7 +4,7 @@
     <div class="mt-8 flex justify-center px-4">
         <div class="w-full max-w-screen-xl bg-white p-6 rounded shadow">
 
-            {{-- Titel + Filter op 1 regel --}}
+            {{-- Titel + Filter --}}
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h1 class="text-xl font-semibold text-green-700">Overzicht gezinnen met allergieën</h1>
 
@@ -31,7 +31,7 @@
                 </div>
             @endif
 
-            {{-- Tabeloverzicht --}}
+            {{-- Tabel --}}
             <div class="overflow-x-auto bg-white rounded shadow border border-gray-300">
                 <table class="min-w-full text-sm text-left">
                     <thead class="bg-gray-100 text-gray-700">
@@ -47,23 +47,22 @@
                     </thead>
                     <tbody>
                     @foreach($families as $family)
+                        @php
+                            $volwassenen = $family->people->filter(fn($p) => strtolower(trim($p->Leeftijdscategorie)) === 'volwassene')->count();
+                            $kinderen = $family->people->filter(fn($p) => strtolower(trim($p->Leeftijdscategorie)) === 'kind')->count();
+                            $babys = $family->people->filter(fn($p) => strtolower(trim($p->Leeftijdscategorie)) === 'baby')->count();
+                            $vertegenwoordiger = $family->people->firstWhere('IsVertegenwoordiger', true);
+                        @endphp
+
                         <tr class="border-t">
                             <td class="px-4 py-2 border">{{ $family->Naam }}</td>
                             <td class="px-4 py-2 border">{{ $family->Omschrijving ?? '-' }}</td>
-                            <td class="px-4 py-2 border">
-                                {{ $family->people->where('Leeftijdscategorie', 'volwassene')->count() }}
-                            </td>
-                            <td class="px-4 py-2 border">
-                                {{ $family->people->where('Leeftijdscategorie', 'kind')->count() }}
-                            </td>
-                            <td class="px-4 py-2 border">
-                                {{ $family->people->where('Leeftijdscategorie', 'baby')->count() }}
-                            </td>
-                            <td class="px-4 py-2 border">
-                                {{ optional($family->people->firstWhere('IsVertegenwoordiger', true))->Voornaam ?? '-' }}
-                            </td>
+                            <td class="px-4 py-2 border">{{ $family->AantalVolwassenen }}</td>
+                            <td class="px-4 py-2 border">{{ $family->AantalKinderen }}</td>
+                            <td class="px-4 py-2 border">{{ $family->AantalBabys }}</td>
+                            <td class="px-4 py-2 border">{{ $vertegenwoordiger->Voornaam ?? '-' }}</td>
                             <td class="px-4 py-2 border text-center">
-                                <a href="{{ route('manager.allergie.show', ['family' => $family->id, 'allergy_id' => request('allergy_id')]) }}">
+                                <a href="{{ route('manager.allergie.show', ['family' => $family->id, 'allergy_id' => $allergyId]) }}">
                                     📄
                                 </a>
                             </td>

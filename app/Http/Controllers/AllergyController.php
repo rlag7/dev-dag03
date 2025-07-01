@@ -12,31 +12,34 @@ class AllergyController extends Controller
     {
         $allergies = Allergy::all();
         $filtered = false;
-        $families = collect(); // Lege collectie standaard
+        $allergyId = $request->input('allergy_id');
 
-        if ($request->has('allergy_id') && $request->allergy_id) {
+        // Haal ALTIJD alle families op met hun personen + allergieën
+        $families = Family::with('people.allergies')->get();
+
+        // Debug: check of personen geladen worden
+        // \Log::info('Loaded families', $families->toArray());
+
+        if ($allergyId) {
             $filtered = true;
-            $allergyId = $request->allergy_id;
-
-            $families = Family::whereHas('people.allergies', function ($query) use ($allergyId) {
-                $query->where('allergy_id', $allergyId);
-            })->with(['people.allergies'])->get();
-        } else {
-            $families = Family::whereHas('people.allergies')->with('people.allergies')->get();
         }
 
-        return view('allergie.index', compact('families', 'allergies', 'filtered'));
+        return view('allergie.index', [
+            'families' => $families,
+            'allergies' => $allergies,
+            'filtered' => $filtered,
+            'allergyId' => $allergyId,
+        ]);
     }
 
     public function show(Family $family, Request $request)
     {
         $allergyId = $request->get('allergy_id');
-        $family->load(['people.allergies']); // eager loading
+        $family->load(['people.allergies']);
 
         return view('allergie.show', [
             'family' => $family,
             'allergyId' => $allergyId,
         ]);
     }
-
 }
