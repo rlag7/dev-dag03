@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClientController;
+
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,5 +26,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 });
 
+Route::middleware('auth')->group(function () {
+
+    // Klantenoverzicht
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::post('/clients/filter', [ClientController::class, 'filter'])->name('clients.filter');
+
+    // Klantdetails
+    Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
+
+    // Klant bewerken
+    Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
+});
 
 require __DIR__.'/auth.php';
