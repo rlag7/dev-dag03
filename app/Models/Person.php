@@ -13,7 +13,7 @@ class Person extends Model
 
     public function allergies()
     {
-        return $this->belongsToMany(Allergy::class, 'allergy_person', 'persoon_id', 'allergy_id')
+        return $this->belongsToMany(Allergy::class, 'allergy_person', 'person_id', 'allergy_id')
             ->using(\App\Models\AllergyPerson::class);
     }
 
