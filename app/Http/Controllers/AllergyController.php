@@ -17,7 +17,9 @@ class AllergyController extends Controller
         if ($allergyId) {
             $families = Family::whereHas('people.allergies', function ($query) use ($allergyId) {
                 $query->where('allergies.id', $allergyId);
-            })->with('people.allergies')->get();
+            })->with(['people.allergies' => function ($query) use ($allergyId) {
+                $query->where('allergies.id', $allergyId);
+            }])->get();
             $filtered = true;
         } else {
             $families = Family::with('people.allergies')->get();
@@ -37,10 +39,10 @@ class AllergyController extends Controller
 
         if ($allergyId) {
             $family->load(['people' => function ($query) use ($allergyId) {
-                $query->whereHas('allergies', function ($query) use ($allergyId) {
-                    $query->where('allergies.id', $allergyId);
-                })->with(['allergies' => function ($query) use ($allergyId) {
-                    $query->where('allergies.id', $allergyId);
+                $query->whereHas('allergies', function ($q) use ($allergyId) {
+                    $q->where('allergies.id', $allergyId);
+                })->with(['allergies' => function ($q) use ($allergyId) {
+                    $q->where('allergies.id', $allergyId);
                 }]);
             }]);
         } else {
@@ -52,7 +54,7 @@ class AllergyController extends Controller
 
     public function edit(Allergy $allergy)
     {
-        $allergies = Allergy::all();  // haal alle allergieën op
+        $allergies = Allergy::all(); // haal alle allergieën op voor dropdown
         return view('allergie.edit', compact('allergy', 'allergies'));
     }
 
@@ -60,15 +62,11 @@ class AllergyController extends Controller
     {
         $validated = $request->validate([
             'Naam' => 'required|string|max:255',
-            'Omschrijving' => 'nullable|string',
         ]);
 
         $allergy->Naam = $validated['Naam'];
-        $allergy->Omschrijving = $validated['Omschrijving'] ?? null;
-        $allergy->DatumGewijzigd = now(); // als je aangepaste timestamp kolom hebt
         $allergy->save();
 
         return redirect()->route('manager.allergie.index')->with('success', 'Allergie succesvol bijgewerkt!');
     }
-
 }

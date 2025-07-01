@@ -12,27 +12,35 @@
                 @csrf
                 @method('PUT')
 
-                <div class="mb-4">
-                    <label for="Naam" class="block font-medium mb-1">Naam</label>
-                    <input type="text" id="Naam" name="Naam" value="{{ old('Naam', $allergy->Naam) }}" class="w-full border px-3 py-2 rounded" required>
+                <div class="mb-6">
+                    <label for="Naam" class="block font-medium mb-1">Allergie</label>
+                    <select id="Naam" name="Naam" class="w-full border border-gray-300 px-3 py-2 rounded" required>
+                        <option value="">-- Selecteer een allergie --</option>
+                        @foreach ($allergies as $a)
+                            <option value="{{ $a->Naam }}" {{ (old('Naam', $allergy->Naam) === $a->Naam) ? 'selected' : '' }}>
+                                {{ $a->Naam }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('Naam')
                     <p class="text-red-600 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="Omschrijving" class="block font-medium mb-1">Omschrijving</label>
-                    <textarea id="Omschrijving" name="Omschrijving" rows="4" class="w-full border px-3 py-2 rounded">{{ old('Omschrijving', $allergy->Omschrijving) }}</textarea>
-                    @error('Omschrijving')
-                    <p class="text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
+                <div class="flex justify-between items-center">
+                    <button type="submit" class="bg-gray-500 text-white px-6 py-2 rounded bg-gray-500 ">
+                        Wijzig Allergie
+                    </button>
+
+                    <div class="flex gap-3">
+                        <a href="{{ url()->previous() }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                            Terug
+                        </a>
+                        <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                            Home
+                        </a>
+                    </div>
                 </div>
-
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Opslaan
-                </button>
-
-                <a href="{{ route('manager.allergie.index') }}" class="ml-4 text-gray-600 hover:underline">Annuleren</a>
             </form>
 
         </div>
