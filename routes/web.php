@@ -38,7 +38,9 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
 
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
-    Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
+    Route::get('/foodpackage/{id}/edit', [FoodPackageController::class, 'edit'])->name('foodpackage.edit');
+    Route::put('/foodpackage/{id}', [FoodPackageController::class, 'update'])->name('foodpackage.update');
+   // Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
 });
 
 // EMPLOYEE routes

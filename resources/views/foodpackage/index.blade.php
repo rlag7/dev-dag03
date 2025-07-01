@@ -80,7 +80,10 @@
                                 @endif
                             </td>
                             <td class="px-4 py-2 border text-center">
-                                {{-- Leeg gelaten zoals gevraagd --}}
+                                <a href="{{ route('manager.foodpackage.edit', $pakket->id) }}"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
+                                Details
+                                </a>
                             </td>
                         </tr>
                     @endif

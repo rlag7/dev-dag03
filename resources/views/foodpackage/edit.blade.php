@@ -10,7 +10,7 @@
 
     <h2 class="text-2xl font-semibold text-green-700 underline mb-6">Pakket Wijzigen</h2>
 
-    <form method="POST" action="{{ route('foodpackage.update', $pakket->id) }}">
+    <form method="POST" action="{{ route('manager.foodpackage.update', $pakket->id) }}">
         @csrf
         @method('PUT')
 
