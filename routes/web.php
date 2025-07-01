@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductSupplierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -42,6 +43,14 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     Route::post('/supplier/filter', [SupplierController::class, 'filter'])->name('supplier.filter');
     Route::get('/supplier/{id}', [SupplierController::class, 'show'])->name('supplier.show');
     Route::get('/supplier/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
+
+    // ✅ Correcte edit en update routes voor producten per leverancier
+    Route::get('/supplier/{supplier}/product/{product}/edit', [ProductSupplierController::class, 'edit'])
+        ->name('product_supplier.edit');
+    Route::put('/supplier/{supplier}/product/{product}', [ProductSupplierController::class, 'update'])
+        ->name('product_supplier.update');
+
+
 
     // Other manager-only routes
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
