@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
+
+    public $timestamps = false;
+
     protected $fillable = ['family_id', 'Voornaam', 'Tussenvoegsel', 'Achternaam', 'Geboortedatum', 'TypePersoon', 'IsVertegenwoordiger', 'IsActief', 'Opmerking', 'DatumAangemaakt', 'DatumGewijzigd'];
 
     public function allergies()

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
+
+    public $timestamps = false;
+
     protected $fillable = ['Straat', 'Huisnummer', 'Toevoeging', 'Postcode', 'Woonplaats', 'Email', 'Mobiel', 'IsActief', 'Opmerking', 'DatumAangemaakt', 'DatumGewijzigd'];
 
     public function families()
