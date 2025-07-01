@@ -11,17 +11,16 @@ class AllergyController extends Controller
     public function index(Request $request)
     {
         $allergies = Allergy::all();
-        $filtered = false;
         $allergyId = $request->input('allergy_id');
-
-        // Haal ALTIJD alle families op met hun personen + allergieën
-        $families = Family::with('people.allergies')->get();
-
-        // Debug: check of personen geladen worden
-        // \Log::info('Loaded families', $families->toArray());
+        $filtered = false;
 
         if ($allergyId) {
+            $families = Family::whereHas('people.allergies', function ($query) use ($allergyId) {
+                $query->where('allergies.id', $allergyId);
+            })->with('people.allergies')->get();
             $filtered = true;
+        } else {
+            $families = Family::with('people.allergies')->get();
         }
 
         return view('allergie.index', [
@@ -35,11 +34,20 @@ class AllergyController extends Controller
     public function show(Family $family, Request $request)
     {
         $allergyId = $request->get('allergy_id');
-        $family->load(['people.allergies']);
 
-        return view('allergie.show', [
-            'family' => $family,
-            'allergyId' => $allergyId,
-        ]);
+        if ($allergyId) {
+            $family->load(['people' => function ($query) use ($allergyId) {
+                $query->whereHas('allergies', function ($query) use ($allergyId) {
+                    $query->where('allergies.id', $allergyId);
+                })->with(['allergies' => function ($query) use ($allergyId) {
+                    $query->where('allergies.id', $allergyId);
+                }]);
+            }]);
+        } else {
+            $family->load('people.allergies');
+        }
+
+        return view('allergie.show', compact('family', 'allergyId'));
     }
+
 }
