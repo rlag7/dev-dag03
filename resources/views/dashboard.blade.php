@@ -33,7 +33,11 @@
 
             <!-- Navigation by Role -->
             <nav class="space-y-2">
-                @if ($user->hasRole('manager'))
+                @if ($user->hasRole('admin'))
+                    <x-dashboard-link route="admin.users.index" label="Gebruikers">
+                        <i class="fas fa-users mr-2"></i>
+                    </x-dashboard-link>
+                @elseif ($user->hasRole('manager'))
 
                 @elseif ($user->hasRole('employee'))
 

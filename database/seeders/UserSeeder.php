@@ -14,9 +14,25 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Rollen aanmaken
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $managerRole = Role::firstOrCreate(['name' => 'manager']);
         $employeeRole = Role::firstOrCreate(['name' => 'employee']);
         $volunteerRole = Role::firstOrCreate(['name' => 'volunteer']);
+
+        $admin = User::firstOrCreate(
+            ['email' => 'hans@maaskantje.nl'],
+            [
+                'persoon_id' => 1,
+                'inlog_naam' => 'admin',
+                'gebruikersnaam' => 'admin@maaskantje.nl',
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'is_ingelogd' => true,
+                'ingelogd' => Carbon::parse('2024-03-13 17:03:06'),
+                'uitgelogd' => null,
+            ]
+        );
+        $admin->assignRole($adminRole);
 
         // Manager
         $manager = User::firstOrCreate(
