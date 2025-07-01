@@ -14,7 +14,7 @@ return new class extends Migration
 
         Schema::create('product_food_package', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('product')->onDelete('cascade');
             $table->foreignId('food_package_id')->constrained('food_packages')->onDelete('cascade');
             $table->integer('AantalProductEenheden');
 

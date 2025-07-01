@@ -14,7 +14,7 @@ return new class extends Migration
 
         Schema::create('product_supplier', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('product')->onDelete('cascade');
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->date('DatumAangeleverd');
             $table->date('DatumEerstVolgendeLevering')->nullable();
