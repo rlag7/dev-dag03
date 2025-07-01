@@ -6,14 +6,14 @@ use App\Models\Family;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 
-class ClientController extends Controller
+class CustomerController extends Controller
 {
     public function index()
     {
-        $clients = Family::with('contact', 'representative')->get();
+        $customers = Family::with('contact', 'representative')->get();
         $postcodes = Contact::select('Postcode')->distinct()->pluck('Postcode');
 
-        return view('customer.index', compact('clients', 'postcodes'));
+        return view('customer.index', compact('customers', 'postcodes'));
     }
 
     public function filter(Request $request)
@@ -21,25 +21,24 @@ class ClientController extends Controller
         $postcode = $request->input('postcode');
         $postcodes = Contact::select('Postcode')->distinct()->pluck('Postcode');
 
-        $clients = Family::whereHas('contact', function ($query) use ($postcode) {
+        $customers = Family::whereHas('contact', function ($query) use ($postcode) {
             $query->where('Postcode', $postcode);
         })->with('contact', 'representative')->get();
 
-        if ($clients->isEmpty()) {
+        if ($customers->isEmpty()) {
             return view('customer.index', [
-                'clients' => collect(),
+                'customers' => collect(),
                 'postcodes' => $postcodes,
                 'message' => 'Er zijn geen klanten bekent die de geselecteerde postcode hebben',
             ]);
         }
 
-        return view('customer.index', compact('clients', 'postcodes'));
+        return view('customer.index', compact('customers', 'postcodes'));
     }
 
     public function show($id)
     {
-        $client = Family::with('contact', 'representative')->findOrFail($id);
-        return view('customer.show', compact('client'));
+        $customer = Family::with('contact', 'representative')->findOrFail($id);
+        return view('customer.show', compact('customer'));
     }
-
 }

@@ -1,17 +1,103 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@php
+    use Illuminate\Support\Facades\Auth;
+    $user = Auth::user();
+    $role = $user->roles->pluck('name')->first();
+@endphp
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+</head>
+<body class="bg-gray-100 text-gray-900">
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex flex-col justify-between">
+        <div class="p-6">
+            <!-- Profile -->
+            <div class="flex items-center space-x-3 mb-10">
+                @if ($user->profile_photo_path)
+                    <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="{{ $user->name }}" class="w-12 h-12 rounded-full object-cover">
+                @else
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random&color=fff" class="w-12 h-12 rounded-full object-cover">
+                @endif
+                <div>
+                    <div class="font-semibold">{{ $user->name }}</div>
+                    <div class="text-sm text-gray-500 capitalize">{{ $role }}</div>
                 </div>
             </div>
+
+            <!-- Navigation by Role -->
+            <nav class="space-y-2">
+                @if ($user->hasRole('admin'))
+                    <x-dashboard-link route="admin.users.index" label="Gebruikers">
+                        <i class="fas fa-users mr-2"></i>
+                    </x-dashboard-link>
+
+                @elseif ($user->hasRole('manager'))
+
+                    <x-dashboard-link route="manager.allergie.index" label="Allergie Overzicht">
+                        <i class="fas fa-notes-medical mr-2"></i>
+                    </x-dashboard-link>
+
+                    <x-dashboard-link route="manager.customers.index" label="Klant Overzicht">
+                        <i class="fas fa-user-friends mr-2"></i>
+                    </x-dashboard-link>
+
+                    <x-dashboard-link route="manager.foodpackage.index" label="Voedselpakket Overzicht">
+                        <i class="fas fa-box-open mr-2"></i>
+                    </x-dashboard-link>
+
+                    <x-dashboard-link route="manager.supplier.index" label="Leverancier Overzicht">
+                        <i class="fas fa-truck mr-2"></i>
+                    </x-dashboard-link>
+
+                @elseif ($user->hasRole('employee'))
+
+                    <x-dashboard-link route="employee.customers.index" label="Klant Overzicht">
+                        <i class="fas fa-user-friends mr-2"></i>
+                    </x-dashboard-link>
+
+                    <x-dashboard-link route="employee.supplier.index" label="Leverancier Overzicht">
+                        <i class="fas fa-truck mr-2"></i>
+                    </x-dashboard-link>
+
+                @elseif ($user->hasRole('volunteer'))
+
+                    <x-dashboard-link route="volunteer.customers.index" label="Klant Overzicht">
+                        <i class="fas fa-user-friends mr-2"></i>
+                    </x-dashboard-link>
+
+                    <x-dashboard-link route="volunteer.foodpackage.index" label="Voedselpakket Overzicht">
+                        <i class="fas fa-box-open mr-2"></i>
+                    </x-dashboard-link>
+
+                @endif
+            </nav>
         </div>
-    </div>
-</x-app-layout>
+
+        <!-- Bottom Links -->
+        <div class="p-6 space-y-4">
+            <a href="/" target="_blank" class="flex items-center text-blue-700 hover:underline">
+                <i class="fas fa-globe mr-2"></i> Live Website
+            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="flex items-center text-red-600 hover:underline">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        @yield('dashboard-content')
+    </main>
+</div>
+</body>
+</html>
