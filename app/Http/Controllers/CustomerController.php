@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Family;
 use App\Models\Contact;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 
@@ -45,7 +44,6 @@ class CustomerController extends Controller
         return view('customer.show', compact('customer'));
     }
 
-
     public function edit($id)
     {
         $customer = Family::with('contact', 'representative')->findOrFail($id);
@@ -57,15 +55,12 @@ class CustomerController extends Controller
         return view('customer.edit', compact('customer', 'roles'));
     }
 
-
-
     public function update(Request $request, $id)
     {
         $customer = Family::with('contact', 'representative')->findOrFail($id);
         $contactId = $customer->contact->first()?->id;
 
         $validated = $request->validate([
-            // Persoon
             'Voornaam' => ['required', 'regex:/^[^\d]*$/', 'max:255'],
             'Tussenvoegsel' => ['nullable', 'regex:/^[^\d-]*$/', 'max:50'],
             'Achternaam' => ['required', 'regex:/^[^\d]*$/', 'max:255'],
@@ -77,7 +72,6 @@ class CustomerController extends Controller
             ],
             'IsVertegenwoordiger' => 'required|in:0,1',
 
-            // Contact
             'Straat' => 'required|string|max:255',
             'Huisnummer' => ['required', 'numeric', 'min:1', 'max:10000'],
             'Toevoeging' => ['nullable', 'regex:/^[^\d-]*$/', 'max:10'],
@@ -121,7 +115,6 @@ class CustomerController extends Controller
         ]);
 
         try {
-            // Update vertegenwoordiger
             $representative = $customer->representative->first();
             if ($representative) {
                 $representative->update([
@@ -129,12 +122,10 @@ class CustomerController extends Controller
                     'Tussenvoegsel' => $validated['Tussenvoegsel'],
                     'Achternaam' => $validated['Achternaam'],
                     'Geboortedatum' => $validated['Geboortedatum'],
-                    // 'TypePersoon' intentionally left out
                     'IsVertegenwoordiger' => $validated['IsVertegenwoordiger'],
                 ]);
             }
 
-            // Update contactgegevens
             $contact = $customer->contact->first();
             if ($contact) {
                 $contact->update([
@@ -148,8 +139,9 @@ class CustomerController extends Controller
                 ]);
             }
 
+            // Terug naar edit pagina met success message
             return redirect()
-                ->route('customers.show', $customer->id)
+                ->route('customers.edit', $customer->id)
                 ->with('success', 'De klantgegevens zijn succesvol bijgewerkt.');
         } catch (\Exception $e) {
             return redirect()
@@ -158,9 +150,4 @@ class CustomerController extends Controller
                 ->with('error', 'Er is iets misgegaan bij het opslaan van de gegevens.');
         }
     }
-
-
-
-
-
 }
