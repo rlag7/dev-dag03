@@ -33,14 +33,20 @@ Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function (
     Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
     Route::resource('customers', CustomerController::class);
 });
+
 // MANAGER routes
 Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
+    Route::post('/supplier/filter', [SupplierController::class, 'filter'])->name('supplier.filter');
+    Route::get('/supplier/{id}', [SupplierController::class, 'show'])->name('supplier.show');
+    Route::get('/supplier/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
+
+    // Other manager-only routes
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
     Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
 });
-
 
 // EMPLOYEE routes
 Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {

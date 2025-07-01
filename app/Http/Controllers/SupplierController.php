@@ -3,68 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
-use App\Models\Product;
-use App\Models\ProductSupplier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class SupplierController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Supplier::query();
+        $types = Supplier::select('LeverancierType')->distinct()->pluck('LeverancierType');
+        $suppliers = Supplier::all();
 
-        if ($request->filled('LeverancierType')) {
-            $query->where('LeverancierType', $request->LeverancierType);
-        }
+        return view('supplier.index', compact('suppliers', 'types'));
+    }
 
-        $suppliers = $query->withCount('products')->get();
+    public function filter(Request $request)
+    {
+        $type = $request->input('LeverancierType');
+        $types = Supplier::select('LeverancierType')->distinct()->pluck('LeverancierType');
 
-        if ($suppliers->isEmpty()) {
-            return view('manager.supplier.index', [
-                'suppliers' => [],
-                'message' => 'Er zijn geen leveranciers bekent van het geselecteerde leverancierstype',
-            ]);
-        }
+        $suppliers = Supplier::where('LeverancierType', $type)->get();
 
-        return view('manager.supplier.index', [
+        return view('supplier.index', [
             'suppliers' => $suppliers,
-            'message' => null,
+            'types' => $types,
         ]);
     }
 
-    public function show(Supplier $supplier)
+    public function show($id)
     {
-        $products = $supplier->products()->withPivot('DatumAangeleverd', 'DatumEerstVolgendeLevering')->get();
-
-        return view('manager.supplier.products', compact('supplier', 'products'));
+        $supplier = Supplier::findOrFail($id);
+        return view('supplier.show', compact('supplier'));
     }
 
-    public function editProduct($supplierId, $productId)
+    public function edit($id)
     {
-        $productSupplier = ProductSupplier::where('supplier_id', $supplierId)
-            ->where('product_id', $productId)
-            ->firstOrFail();
-
-        return view('manager.supplier.edit-product', compact('productSupplier'));
-    }
-
-    public function updateProduct(Request $request, $supplierId, $productId)
-    {
-        $request->validate([
-            'DatumEerstVolgendeLevering' => 'required|date',
-        ]);
-
-        $productSupplier = ProductSupplier::where('supplier_id', $supplierId)
-            ->where('product_id', $productId)
-            ->firstOrFail();
-
-        $productSupplier->DatumEerstVolgendeLevering = $request->DatumEerstVolgendeLevering;
-        $productSupplier->DatumGewijzigd = Carbon::now();
-        $productSupplier->save();
-
-        return redirect()->route('manager.supplier.products', $supplierId)
-            ->with('success', 'De houdbaarbaarheidsdatum is gewijzigd');
+        $supplier = Supplier::findOrFail($id);
+        return view('supplier.edit', compact('supplier'));
     }
 }

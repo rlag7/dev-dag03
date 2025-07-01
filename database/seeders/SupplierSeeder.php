@@ -2,27 +2,45 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SupplierSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        DB::table('suppliers')->insert([
-            ['id' => 1, 'Naam' => 'Jumbo', 'ContactPersoon' => 'Jan de Groot', 'LeverancierNummer' => 'L001', 'LeverancierType' => 'Supermarkt', 'IsActief' => 1, 'Opmerking' => 'grote leverancier'],
-            ['id' => 2, 'Naam' => 'Albert Heijn', 'ContactPersoon' => 'Piet van Dijk', 'LeverancierNummer' => 'L002', 'LeverancierType' => 'Supermarkt', 'IsActief' => 1, 'Opmerking' => null],
-            ['id' => 3, 'Naam' => 'Voedselcentrale', 'ContactPersoon' => 'Karin Smits', 'LeverancierNummer' => 'L003', 'LeverancierType' => 'Distributiecentrum', 'IsActief' => 1, 'Opmerking' => null],
-            ['id' => 4, 'Naam' => 'Plus', 'ContactPersoon' => 'Frits Jansen', 'LeverancierNummer' => 'L004', 'LeverancierType' => 'Supermarkt', 'IsActief' => 1, 'Opmerking' => null],
-            ['id' => 5, 'Naam' => 'Sligro', 'ContactPersoon' => 'Marijke Meijer', 'LeverancierNummer' => 'L005', 'LeverancierType' => 'Groothandel', 'IsActief' => 1, 'Opmerking' => null],
-            ['id' => 6, 'Naam' => 'Boerderij De Lente', 'ContactPersoon' => 'Bert Boer', 'LeverancierNummer' => 'L006', 'LeverancierType' => 'Boerderij', 'IsActief' => 1, 'Opmerking' => 'versproducten'],
-            ['id' => 7, 'Naam' => 'Stichting Restvoedsel', 'ContactPersoon' => 'Sanne Stichting', 'LeverancierNummer' => 'L007', 'LeverancierType' => 'Non-profit', 'IsActief' => 1, 'Opmerking' => null],
-            ['id' => 8, 'Naam' => 'Voedselbank Den Bosch', 'ContactPersoon' => 'Johan Maas', 'LeverancierNummer' => 'L008', 'LeverancierType' => 'Voedselbank', 'IsActief' => 1, 'Opmerking' => null],
-        ]);
+        $now = Carbon::now()->format('Y-m-d H:i:s');
 
+        // Leveranciers + gekoppelde contact ID's
+        $suppliers = [
+            ['id' => 1, 'Naam' => 'Albert Heijn', 'ContactPersoon' => 'Ruud ter Weijden', 'LeverancierNummer' => 'L0001', 'LeverancierType' => 'Bedrijf', 'ContactId' => 7],
+            ['id' => 2, 'Naam' => 'Albertus Kerk', 'ContactPersoon' => 'Leo Pastoor', 'LeverancierNummer' => 'L0002', 'LeverancierType' => 'Instelling', 'ContactId' => 8],
+            ['id' => 3, 'Naam' => 'Gemeente Utrecht', 'ContactPersoon' => 'Mohammed Yazidi', 'LeverancierNummer' => 'L0003', 'LeverancierType' => 'Overheid', 'ContactId' => 9],
+            ['id' => 4, 'Naam' => 'Boerderij Meerhoven', 'ContactPersoon' => 'Bertus van Driel', 'LeverancierNummer' => 'L0004', 'LeverancierType' => 'Particulier', 'ContactId' => 10],
+            ['id' => 5, 'Naam' => 'Jan van der Heijden', 'ContactPersoon' => 'Jan van der Heijden', 'LeverancierNummer' => 'L0005', 'LeverancierType' => 'Donor', 'ContactId' => 11],
+            ['id' => 6, 'Naam' => 'Vomar', 'ContactPersoon' => 'Jaco Pastorius', 'LeverancierNummer' => 'L0006', 'LeverancierType' => 'Bedrijf', 'ContactId' => 12],
+            ['id' => 7, 'Naam' => 'DekaMarkt', 'ContactPersoon' => 'Sil den Dollaard', 'LeverancierNummer' => 'L0007', 'LeverancierType' => 'Bedrijf', 'ContactId' => 13],
+            ['id' => 8, 'Naam' => 'Gemeente Vught', 'ContactPersoon' => 'Jan Blokker', 'LeverancierNummer' => 'L0008', 'LeverancierType' => 'Overheid', 'ContactId' => 13],
+        ];
+
+        foreach ($suppliers as $supplier) {
+            DB::table('suppliers')->insert([
+                'id' => $supplier['id'],
+                'Naam' => $supplier['Naam'],
+                'ContactPersoon' => $supplier['ContactPersoon'],
+                'LeverancierNummer' => $supplier['LeverancierNummer'],
+                'LeverancierType' => $supplier['LeverancierType'],
+                'IsActief' => true,
+                'Opmerking' => null,
+                'DatumAangemaakt' => $now,
+                'DatumGewijzigd' => $now,
+            ]);
+
+            DB::table('contact_supplier')->insert([
+                'supplier_id' => $supplier['id'],
+                'contact_id' => $supplier['ContactId'],
+            ]);
+        }
     }
 }
