@@ -41,4 +41,10 @@ class CustomerController extends Controller
         $customer = Family::with('contact', 'representative')->findOrFail($id);
         return view('customer.show', compact('customer'));
     }
+
+    public function edit($id)
+    {
+        $customer = Family::with('contact', 'representative')->findOrFail($id);
+        return view('customer.edit', compact('customer'));
+    }
 }

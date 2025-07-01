@@ -27,10 +27,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
-    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-    Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
-    Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
+    Route::resource('customers', CustomerController::class);
 });
+
 
 
 
