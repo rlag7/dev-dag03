@@ -26,7 +26,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Shared customer routes for all roles
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
     // Customer overview and filtering
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
     Route::post('/clients/filter', [ClientController::class, 'filter'])->name('clients.filter');
@@ -38,5 +38,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
     Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
 });
+
 
 require __DIR__.'/auth.php';
