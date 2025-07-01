@@ -57,6 +57,8 @@ class CustomerController extends Controller
         return view('customer.edit', compact('customer', 'roles'));
     }
 
+
+
     public function update(Request $request, $id)
     {
         $customer = Family::with('contact', 'representative')->findOrFail($id);
@@ -73,7 +75,6 @@ class CustomerController extends Controller
                 'before_or_equal:' . now()->subYears(8)->toDateString(),
                 'after_or_equal:' . now()->subYears(120)->toDateString()
             ],
-            'TypePersoon' => 'required|in:admin,manager,employee,volunteer',
             'IsVertegenwoordiger' => 'required|in:0,1',
 
             // Contact
@@ -97,7 +98,7 @@ class CustomerController extends Controller
             ],
             'Mobiel' => [
                 'required',
-                'regex:/^(0[1-9][0-9]{8}|(\+31)[1-9][0-9]{8})$/',
+                'regex:/^(0[1-9][0-9]{8}|\+31[1-9][0-9]{8})$/',
                 Rule::unique('contacts', 'Mobiel')->ignore($contactId),
             ],
         ], [
@@ -128,7 +129,7 @@ class CustomerController extends Controller
                     'Tussenvoegsel' => $validated['Tussenvoegsel'],
                     'Achternaam' => $validated['Achternaam'],
                     'Geboortedatum' => $validated['Geboortedatum'],
-                    'TypePersoon' => $validated['TypePersoon'],
+                    // 'TypePersoon' intentionally left out
                     'IsVertegenwoordiger' => $validated['IsVertegenwoordiger'],
                 ]);
             }
@@ -157,6 +158,7 @@ class CustomerController extends Controller
                 ->with('error', 'Er is iets misgegaan bij het opslaan van de gegevens.');
         }
     }
+
 
 
 
