@@ -37,44 +37,42 @@
                     <x-dashboard-link route="admin.users.index" label="Gebruikers">
                         <i class="fas fa-users mr-2"></i>
                     </x-dashboard-link>
+
                 @elseif ($user->hasRole('manager'))
 
-                    <x-dashboard-link route="mallergie.index" label="Allergie Overzicht">
+                    <x-dashboard-link route="manager.allergie.index" label="Allergie Overzicht">
                         <i class="fas fa-notes-medical mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="customer.index" label="Klant Overzicht">
+                    <x-dashboard-link route="manager.customers.index" label="Klant Overzicht">
                         <i class="fas fa-user-friends mr-2"></i>
                     </x-dashboard-link>
 
-
-                    <x-dashboard-link route="foodpackage.index" label="VoedselPakket Overzicht">
+                    <x-dashboard-link route="manager.foodpackage.index" label="Voedselpakket Overzicht">
                         <i class="fas fa-box-open mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="supplier.index" label="Leverancier Overzicht">
+                    <x-dashboard-link route="manager.supplier.index" label="Leverancier Overzicht">
                         <i class="fas fa-truck mr-2"></i>
                     </x-dashboard-link>
 
-
                 @elseif ($user->hasRole('employee'))
 
-                    <x-dashboard-link route="customer.index" label="Klant Overzicht">
+                    <x-dashboard-link route="employee.customers.index" label="Klant Overzicht">
                         <i class="fas fa-user-friends mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="supplier.index" label="Leverancier Overzicht">
+                    <x-dashboard-link route="employee.supplier.index" label="Leverancier Overzicht">
                         <i class="fas fa-truck mr-2"></i>
                     </x-dashboard-link>
 
                 @elseif ($user->hasRole('volunteer'))
 
-                    <x-dashboard-link route="customer.index" label="Klant Overzicht">
+                    <x-dashboard-link route="volunteer.customers.index" label="Klant Overzicht">
                         <i class="fas fa-user-friends mr-2"></i>
                     </x-dashboard-link>
 
-
-                    <x-dashboard-link route="foodpackage.edit" label="VoedselPakket wijzijgen">
+                    <x-dashboard-link route="volunteer.foodpackage.index" label="Voedselpakket Overzicht">
                         <i class="fas fa-box-open mr-2"></i>
                     </x-dashboard-link>
 
