@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductSupplierController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -10,8 +11,15 @@ use App\Http\Controllers\FoodpackageController;
 use App\Http\Controllers\AllergyController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $users = User::whereIn('email', [
+        'hans@maaskantje.nl',
+        'jan@maaskantje.nl',
+        'herman@maaskantje.nl',
+    ])->with('roles')->get();
+
+    return view('welcome', compact('users'));
 });
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
