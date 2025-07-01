@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 
+
+
 Route::get('/', function () {
     return view('welcome');
 });
