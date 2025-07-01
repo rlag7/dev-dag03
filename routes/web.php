@@ -35,11 +35,12 @@ Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function (
 });
 // MANAGER routes
 Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
-
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
     Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
     Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
 });
+
 
 // EMPLOYEE routes
 Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {
