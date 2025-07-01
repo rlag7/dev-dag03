@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="mt-8 flex justify-center px-4">
         <div class="w-full max-w-screen-xl bg-white p-6 rounded shadow">
 

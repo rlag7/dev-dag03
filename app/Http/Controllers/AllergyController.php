@@ -50,4 +50,25 @@ class AllergyController extends Controller
         return view('allergie.show', compact('family', 'allergyId'));
     }
 
+    public function edit(Allergy $allergy)
+    {
+        $allergies = Allergy::all();  // haal alle allergieën op
+        return view('allergie.edit', compact('allergy', 'allergies'));
+    }
+
+    public function update(Request $request, Allergy $allergy)
+    {
+        $validated = $request->validate([
+            'Naam' => 'required|string|max:255',
+            'Omschrijving' => 'nullable|string',
+        ]);
+
+        $allergy->Naam = $validated['Naam'];
+        $allergy->Omschrijving = $validated['Omschrijving'] ?? null;
+        $allergy->DatumGewijzigd = now(); // als je aangepaste timestamp kolom hebt
+        $allergy->save();
+
+        return redirect()->route('manager.allergie.index')->with('success', 'Allergie succesvol bijgewerkt!');
+    }
+
 }

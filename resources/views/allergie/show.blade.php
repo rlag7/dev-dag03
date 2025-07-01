@@ -4,9 +4,7 @@
     <div class="mt-8 flex justify-center px-4">
         <div class="w-full max-w-screen-md bg-white p-6 rounded shadow">
 
-            <h1 class="text-xl font-semibold text-green-700 mb-6">
-                Allergieën in het gezin
-            </h1>
+            <h1 class="text-xl font-semibold text-green-700 mb-6">Allergieën in het gezin</h1>
 
             {{-- Gezin info --}}
             <table class="w-full mb-6 text-sm border border-gray-300">
@@ -39,37 +37,27 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @php
-                        $foundAny = false;
-                    @endphp
-
+                    @php $foundAny = false; @endphp
                     @foreach ($family->people as $person)
                         @php
-                            // Filter allergieën per persoon op $allergyId als die gezet is
                             $relevantAllergies = $allergyId
-                                ? $person->allergies->where('id', (int) $allergyId)
-                                : $person->allergies;
+                              ? $person->allergies->where('id', (int) $allergyId)
+                              : $person->allergies;
                         @endphp
 
                         @if ($relevantAllergies->isNotEmpty())
                             @php $foundAny = true; @endphp
                             <tr class="border-t">
-                                <td class="px-4 py-2 border">
-                                    {{ $person->Voornaam }} {{ $person->Tussenvoegsel }} {{ $person->Achternaam }}
-                                </td>
-                                <td class="px-4 py-2 border">
-                                    {{ $person->TypePersoon }}
-                                </td>
-                                <td class="px-4 py-2 border">
-                                    {{ $person->IsVertegenwoordiger ? 'Vertegenwoordiger' : '-' }}
-                                </td>
+                                <td class="px-4 py-2 border">{{ $person->Voornaam }} {{ $person->Tussenvoegsel }} {{ $person->Achternaam }}</td>
+                                <td class="px-4 py-2 border">{{ $person->TypePersoon }}</td>
+                                <td class="px-4 py-2 border">{{ $person->IsVertegenwoordiger ? 'Vertegenwoordiger' : '-' }}</td>
                                 <td class="px-4 py-2 border">
                                     @foreach ($relevantAllergies as $allergy)
                                         {{ $allergy->Naam }}@if (!$loop->last), @endif
                                     @endforeach
                                 </td>
                                 <td class="px-4 py-2 border text-center">
-                                    <a href="#" class="text-blue-600 hover:underline">✎</a>
+                                    <a href="{{ route('manager.allergie.edit', $allergy->id) }}" class="text-blue-600 hover:underline">✎</a>
                                 </td>
                             </tr>
                         @endif
@@ -77,9 +65,7 @@
 
                     @unless ($foundAny)
                         <tr>
-                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">
-                                Geen personen met deze allergie gevonden.
-                            </td>
+                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">Geen personen met deze allergie gevonden.</td>
                         </tr>
                     @endunless
                     </tbody>
@@ -88,12 +74,8 @@
 
             {{-- Navigatie --}}
             <div class="mt-6 flex justify-end gap-2">
-                <a href="{{ url()->previous() }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    terug
-                </a>
-                <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    home
-                </a>
+                <a href="{{ url()->previous() }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">terug</a>
+                <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">home</a>
             </div>
 
         </div>
