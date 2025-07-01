@@ -12,7 +12,7 @@ class FoodpackageController extends Controller
      */
     public function index() 
     {
-        return view('foodpackage.index', ['pakketten' => FoodPackage::all()]);
+        return view('foodpackage.index', ['pakketten' => FoodPackage::with('family')->get();]);
     }
 
     /**
