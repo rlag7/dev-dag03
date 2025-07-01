@@ -61,29 +61,33 @@ class FoodpackageController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $pakket = FoodPackage::with('family')->findOrFail($id);
+
+        // Controleer of het gezin actief is
+        if (!$pakket->family || !$pakket->family->IsActief) {
+            // Redirect terug naar edit met een foutmelding
+            return redirect()->route('manager.foodpackage.edit', $pakket->id)
+                            ->with('error', 'Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt');
+        }
+
         $validated = $request->validate([
             'Status' => 'required|in:Uitgereikt,Niet uitgereikt',
         ]);
 
-        $pakket = FoodPackage::findOrFail($id);
-
         $pakket->Status = $validated['Status'];
 
-        // Zet DatumUitgifte naar vandaag als status "Uitgereikt" is en nog niet gezet
         if ($pakket->Status === 'Uitgereikt' && !$pakket->DatumUitgifte) {
             $pakket->DatumUitgifte = Carbon::today();
         }
 
-        // Als status "Niet uitgereikt", kan je eventueel DatumUitgifte resetten (optioneel)
         if ($pakket->Status === 'Niet uitgereikt') {
             $pakket->DatumUitgifte = null;
         }
 
         $pakket->save();
 
-        // Redirect met flash message
-        return redirect()->route('manager.foodpackage.edit', $pakket->id)
+        return redirect()->route('manager.foodpackage.index', $pakket->id)
                         ->with('success', 'De wijziging is doorgevoerd')
-                        ->with('redirectToIndex', true);  // Flag voor automatische redirect
+                        ->with('redirectToIndex', true);
     }
 }

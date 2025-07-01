@@ -10,6 +10,17 @@
 
     <h2 class="text-2xl font-semibold text-green-700 underline mb-6">Pakket Wijzigen</h2>
 
+    {{-- Foutmelding tonen als gezin niet actief is --}}
+    @php
+        $isActive = $pakket->family && $pakket->family->IsActief;
+    @endphp
+
+    @if(!$isActive)
+        <div class="mb-6 p-4 bg-red-100 text-red-700 rounded">
+            Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt.
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('manager.foodpackage.update', $pakket->id) }}">
         @csrf
         @method('PUT')
@@ -53,7 +64,13 @@
         {{-- Alleen Status aanpasbaar --}}
         <div class="mb-6">
             <label for="Status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select id="Status" name="Status" class="w-full border rounded px-3 py-2" required>
+            <select
+                id="Status"
+                name="Status"
+                class="w-full border rounded px-3 py-2"
+                required
+                {{ $isActive ? '' : 'disabled' }}
+            >
                 <option value="Uitgereikt" {{ $pakket->Status === 'Uitgereikt' ? 'selected' : '' }}>Uitgereikt</option>
                 <option value="Niet uitgereikt" {{ $pakket->Status === 'Niet uitgereikt' ? 'selected' : '' }}>Niet uitgereikt</option>
             </select>
@@ -61,7 +78,11 @@
 
         {{-- Wijzig status knop --}}
         <div class="mb-6">
-            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+            <button
+                type="submit"
+                class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+                {{ $isActive ? '' : 'disabled' }}
+            >
                 Wijzig Status
             </button>
         </div>
@@ -69,7 +90,7 @@
 
     {{-- Navigatie knoppen --}}
     <div class="flex justify-between">
-        <a href="{{ url()->previous() }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
+        <a href="{{ route('manager.foodpackage.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
             ← Terug
         </a>
         <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
