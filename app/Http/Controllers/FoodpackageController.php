@@ -7,7 +7,8 @@ use App\Models\Family;
 use App\Models\Diet;
 use App\Models\Product;
 use App\Models\ProductFoodPackage;
-use App\Models\DietFamily;              
+use App\Models\DietFamily;    
+use Illuminate\Support\Carbon;          
 use Illuminate\Http\Request;
 
 class FoodpackageController extends Controller
@@ -57,8 +58,32 @@ class FoodpackageController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'Status' => 'required|in:Uitgereikt,Niet uitgereikt',
+        ]);
+
+        $pakket = FoodPackage::findOrFail($id);
+
+        $pakket->Status = $validated['Status'];
+
+        // Zet DatumUitgifte naar vandaag als status "Uitgereikt" is en nog niet gezet
+        if ($pakket->Status === 'Uitgereikt' && !$pakket->DatumUitgifte) {
+            $pakket->DatumUitgifte = Carbon::today();
+        }
+
+        // Als status "Niet uitgereikt", kan je eventueel DatumUitgifte resetten (optioneel)
+        if ($pakket->Status === 'Niet uitgereikt') {
+            $pakket->DatumUitgifte = null;
+        }
+
+        $pakket->save();
+
+        // Redirect met flash message
+        return redirect()->route('manager.foodpackage.edit', $pakket->id)
+                        ->with('success', 'De wijziging is doorgevoerd')
+                        ->with('redirectToIndex', true);  // Flag voor automatische redirect
     }
 }

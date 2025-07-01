@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class FoodPackage extends Model
 {
+    public $timestamps = false;
+
     public function family()
     {
         return $this->belongsTo(Family::class);

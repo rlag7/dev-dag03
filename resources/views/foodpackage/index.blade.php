@@ -41,6 +41,14 @@
             </div>
         @endif
 
+        @if(session('success'))
+            <div class="mb-4 p-4 bg-green-100 text-green-800 rounded">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Geen pakketten voor geselecteerde eetwens --}}
+
         {{-- Tabel --}}
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm text-left border">

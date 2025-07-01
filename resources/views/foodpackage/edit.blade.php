@@ -31,29 +31,32 @@
         </fieldset>
 
         {{-- Pakket details --}}
-        <div class="mb-4">
-            <label for="PakketNummer" class="block text-sm font-medium text-gray-700 mb-1">Pakket Nummer</label>
-            <input id="PakketNummer" name="PakketNummer" type="text" value="{{ old('PakketNummer', $pakket->PakketNummer) }}" class="w-full border rounded px-3 py-2" required />
-        </div>
+        <fieldset disabled>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Pakket Nummer</label>
+                <input type="text" value="{{ $pakket->PakketNummer }}" class="w-full border rounded px-3 py-2" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Datum Samenstelling</label>
+                <input type="date" value="{{ optional($pakket->DatumSamenstelling)->format('Y-m-d') }}" class="w-full border rounded px-3 py-2" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Datum Uitgifte</label>
+                <input type="date" value="{{ optional($pakket->DatumUitgifte)->format('Y-m-d') }}" class="w-full border rounded px-3 py-2" />
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Aantal Producten</label>
+                <input type="number" value="{{ $pakket->AantalProducten ?? 0 }}" class="w-full border rounded px-3 py-2" />
+            </div>
+        </fieldset>
 
-        <div class="mb-4">
-            <label for="DatumSamenstelling" class="block text-sm font-medium text-gray-700 mb-1">Datum Samenstelling</label>
-            <input id="DatumSamenstelling" name="DatumSamenstelling" type="date" value="{{ old('DatumSamenstelling', optional($pakket->DatumSamenstelling)->format('Y-m-d')) }}" class="w-full border rounded px-3 py-2" required />
-        </div>
-
-        <div class="mb-4">
-            <label for="DatumUitgifte" class="block text-sm font-medium text-gray-700 mb-1">Datum Uitgifte</label>
-            <input id="DatumUitgifte" name="DatumUitgifte" type="date" value="{{ old('DatumUitgifte', optional($pakket->DatumUitgifte)->format('Y-m-d')) }}" class="w-full border rounded px-3 py-2" />
-        </div>
-
-        <div class="mb-4">
-            <label for="Status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <input id="Status" name="Status" type="text" value="{{ old('Status', $pakket->Status) }}" class="w-full border rounded px-3 py-2" />
-        </div>
-
+        {{-- Alleen Status aanpasbaar --}}
         <div class="mb-6">
-            <label for="AantalProducten" class="block text-sm font-medium text-gray-700 mb-1">Aantal Producten</label>
-            <input id="AantalProducten" name="AantalProducten" type="number" min="0" value="{{ old('AantalProducten', $pakket->AantalProducten ?? 0) }}" class="w-full border rounded px-3 py-2" />
+            <label for="Status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="Status" name="Status" class="w-full border rounded px-3 py-2" required>
+                <option value="Uitgereikt" {{ $pakket->Status === 'Uitgereikt' ? 'selected' : '' }}>Uitgereikt</option>
+                <option value="Niet uitgereikt" {{ $pakket->Status === 'Niet uitgereikt' ? 'selected' : '' }}>Niet uitgereikt</option>
+            </select>
         </div>
 
         {{-- Wijzig status knop --}}
