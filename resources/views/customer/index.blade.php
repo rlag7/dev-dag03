@@ -11,7 +11,7 @@
         Overzicht Klanten
     </h2>
 
-    <form method="POST" action="{{ route('clients.filter') }}"
+    <form method="POST" action="{{ route('customers.filter') }}"
           class="bg-white shadow-lg rounded p-4 relative">
         @csrf
 
@@ -53,19 +53,19 @@
                 </tr>
                 </thead>
                 <tbody>
-                @forelse($clients as $client)
+                @forelse($customers as $customer)
                     <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-2 border">{{ $client->Naam }}</td>
-                        <td class="px-4 py-2 border">{{ $client->representative->first()->Voornaam ?? '-' }}</td>
-                        <td class="px-4 py-2 border">{{ $client->contact->first()->Email ?? '-' }}</td>
-                        <td class="px-4 py-2 border">{{ $client->contact->first()->Mobiel ?? '-' }}</td>
+                        <td class="px-4 py-2 border">{{ $customer->Naam }}</td>
+                        <td class="px-4 py-2 border">{{ $customer->representative->first()->Voornaam ?? '-' }}</td>
+                        <td class="px-4 py-2 border">{{ $customer->contact->first()->Email ?? '-' }}</td>
+                        <td class="px-4 py-2 border">{{ $customer->contact->first()->Mobiel ?? '-' }}</td>
                         <td class="px-4 py-2 border">
-                            {{ $client->contact->first()->Straat ?? '-' }}
-                            {{ $client->contact->first()->Huisnummer ?? '' }}
+                            {{ $customer->contact->first()->Straat ?? '-' }}
+                            {{ $customer->contact->first()->Huisnummer ?? '' }}
                         </td>
-                        <td class="px-4 py-2 border">{{ $client->contact->first()->Woonplaats ?? '-' }}</td>
+                        <td class="px-4 py-2 border">{{ $customer->contact->first()->Woonplaats ?? '-' }}</td>
                         <td class="px-4 py-2 border text-center">
-                            <a href="{{ route('clients.show', $client->id) }}" class="text-blue-600 hover:underline">
+                            <a href="{{ route('customers.show', $customer->id) }}" class="text-blue-600 hover:underline">
                                 📄
                             </a>
                         </td>
@@ -73,7 +73,7 @@
                 @empty
                     <tr>
                         <td colspan="7" class="px-4 py-3 text-center bg-yellow-100 text-yellow-700">
-                            Er zijn geen klanten bekent die de geselecteerde postcode hebben
+                            Er zijn geen klanten bekend die de geselecteerde postcode hebben.
                         </td>
                     </tr>
                 @endforelse

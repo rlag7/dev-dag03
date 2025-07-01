@@ -25,8 +25,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 });
 
-// Shared customer routes for all roles
+
 Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
+    Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
+});
     // Customer overview and filtering
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
