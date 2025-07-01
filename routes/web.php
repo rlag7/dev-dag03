@@ -27,8 +27,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
+    // filter
+    Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
     Route::resource('customers', CustomerController::class);
 });
+
 
 
 
