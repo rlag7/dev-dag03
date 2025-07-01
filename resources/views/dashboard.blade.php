@@ -37,25 +37,18 @@
                     <x-dashboard-link route="admin.users.index" label="Gebruikers">
                         <i class="fas fa-users mr-2"></i>
                     </x-dashboard-link>
+
                 @elseif ($user->hasRole('manager'))
 
                     <x-dashboard-link route="manager.allergie.index" label="Allergie Overzicht">
                         <i class="fas fa-notes-medical mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="manager.allergie.edit" label="Allergie Wijzigen">
-                        <i class="fas fa-edit mr-2"></i>
-                    </x-dashboard-link>
-
-                    <x-dashboard-link route="manager.customer.index" label="Klant Overzicht">
+                    <x-dashboard-link route="manager.customers.index" label="Klant Overzicht">
                         <i class="fas fa-user-friends mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="manager.customer.edit" label="Klant Wijzigen">
-                        <i class="fas fa-user-edit mr-2"></i>
-                    </x-dashboard-link>
-
-                    <x-dashboard-link route="manager.foodpackage.index" label="VoedselPakket Overzicht">
+                    <x-dashboard-link route="manager.foodpackage.index" label="Voedselpakket Overzicht">
                         <i class="fas fa-box-open mr-2"></i>
                     </x-dashboard-link>
 
@@ -63,18 +56,10 @@
                         <i class="fas fa-truck mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="manager.supplier.edit" label="Leverancier Wijzigen">
-                        <i class="fas fa-truck-loading mr-2"></i>
-                    </x-dashboard-link>
-
                 @elseif ($user->hasRole('employee'))
 
-                    <x-dashboard-link route="employee.customer.index" label="Klant Overzicht">
+                    <x-dashboard-link route="employee.customers.index" label="Klant Overzicht">
                         <i class="fas fa-user-friends mr-2"></i>
-                    </x-dashboard-link>
-
-                    <x-dashboard-link route="employee.customer.edit" label="Klant Wijzigen">
-                        <i class="fas fa-user-edit mr-2"></i>
                     </x-dashboard-link>
 
                     <x-dashboard-link route="employee.supplier.index" label="Leverancier Overzicht">
@@ -83,15 +68,11 @@
 
                 @elseif ($user->hasRole('volunteer'))
 
-                    <x-dashboard-link route="volunteer.customer.index" label="Klant Overzicht">
+                    <x-dashboard-link route="volunteer.customers.index" label="Klant Overzicht">
                         <i class="fas fa-user-friends mr-2"></i>
                     </x-dashboard-link>
 
-                    <x-dashboard-link route="volunteer.customer.edit" label="Klant Wijzigen">
-                        <i class="fas fa-user-edit mr-2"></i>
-                    </x-dashboard-link>
-
-                    <x-dashboard-link route="volunteer.foodpackage.edit" label="VoedselPakket wijzijgen">
+                    <x-dashboard-link route="volunteer.foodpackage.index" label="Voedselpakket Overzicht">
                         <i class="fas fa-box-open mr-2"></i>
                     </x-dashboard-link>
 

@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\FoodpackageController;
+use App\Http\Controllers\AllergyController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,7 +16,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Profile routes
+// Profielroutes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -25,15 +28,31 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 });
 
-
+// Customer managing routes
 Route::middleware(['auth', 'role:manager|employee|volunteer'])->group(function () {
-    // filter
     Route::post('/customers/filter', [CustomerController::class, 'filter'])->name('customers.filter');
     Route::resource('customers', CustomerController::class);
 });
+// MANAGER routes
+Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
 
+    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
+    Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
+    Route::get('/allergie', [AllergyController::class, 'index'])->name('allergie.index');
+});
 
+// EMPLOYEE routes
+Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
 
+    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
+});
 
+// VOLUNTEER routes
+Route::middleware(['auth', 'role:volunteer'])->prefix('volunteer')->name('volunteer.')->group(function () {
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/foodpackage', [FoodpackageController::class, 'index'])->name('foodpackage.index');
+});
 
 require __DIR__.'/auth.php';

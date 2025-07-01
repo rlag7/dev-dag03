@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         $volunteerRole = Role::firstOrCreate(['name' => 'volunteer']);
 
         $admin = User::firstOrCreate(
-            ['email' => 'hans@maaskantje.nl'],
+            ['email' => 'admin@maaskantje.nl'],
             [
                 'persoon_id' => 1,
                 'inlog_naam' => 'admin',
