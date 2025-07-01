@@ -2,63 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Family;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+public function index()
+{
+// Toon alle klanten standaard
+$clients = Family::with('contact', 'representative')->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+return view('customer.index', compact('clients'));
+}
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+public function filter(Request $request)
+{
+$postcode = $request->input('postcode');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+$clients = Family::whereHas('contact', function ($query) use ($postcode) {
+$query->where('Postcode', $postcode);
+})->with('contact', 'representative')->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+if ($clients->isEmpty()) {
+return back()->with('message', 'Er zijn geen klanten bekent die de geselecteerde postcode hebben')
+->with('clients', collect());
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+return view('customer.index', compact('clients'));
+}
 }

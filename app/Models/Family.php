@@ -17,10 +17,15 @@ class Family extends Model
             ->using(\App\Models\DietFamily::class);
     }
 
-    public function contacts()
+    public function contact()
     {
-        return $this->belongsToMany(Contact::class, 'contact_family')
-            ->using(\App\Models\ContactFamily::class);
+        return $this->belongsToMany(Contact::class, 'contact_family', 'family_id', 'contact_id');
+    }
+
+
+    public function representative()
+    {
+        return $this->hasMany(Person::class)->where('IsVertegenwoordiger', true);
     }
 
 
