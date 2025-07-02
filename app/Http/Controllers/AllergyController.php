@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Allergy;
 use App\Models\Family;
+use App\Models\Person;
 
 class AllergyController extends Controller
 {
@@ -37,36 +38,50 @@ class AllergyController extends Controller
     {
         $allergyId = $request->get('allergy_id');
 
-        if ($allergyId) {
-            $family->load(['people' => function ($query) use ($allergyId) {
-                $query->whereHas('allergies', function ($q) use ($allergyId) {
-                    $q->where('allergies.id', $allergyId);
-                })->with(['allergies' => function ($q) use ($allergyId) {
-                    $q->where('allergies.id', $allergyId);
-                }]);
-            }]);
-        } else {
-            $family->load('people.allergies');
-        }
+        $people = $family->people()->with('allergies')->get();
+        $allergy = Allergy::find($allergyId);
 
-        return view('allergie.show', compact('family', 'allergyId'));
+        return view('allergie.show', compact('family', 'people', 'allergy', 'allergyId'));
     }
 
-    public function edit(Allergy $allergy)
+
+
+    public function edit($personId)
     {
-        $allergies = Allergy::all(); // haal alle allergieën op voor dropdown
-        return view('allergie.edit', compact('allergy', 'allergies'));
+        $person = Person::with('allergies')->findOrFail($personId);
+        $currentAllergy = $person->allergies->first(); // We gaan uit van 1 actieve allergie
+        $allergies = Allergy::all();
+
+        return view('allergie.edit', compact('person', 'allergies', 'currentAllergy'));
     }
 
-    public function update(Request $request, Allergy $allergy)
+// Verwerk de wijziging van een allergie
+    public function update(Request $request, $personId)
     {
         $validated = $request->validate([
-            'Naam' => 'required|string|max:255',
+            'allergy_id' => 'required|exists:allergies,id'
         ]);
 
-        $allergy->Naam = $validated['Naam'];
-        $allergy->save();
+        $person = Person::findOrFail($personId);
 
-        return redirect()->route('manager.allergie.index')->with('success', 'Allergie succesvol bijgewerkt!');
+        $person->allergies()->sync([$validated['allergy_id']]);
+
+        $risk = Allergy::find($validated['allergy_id'])->AnafylactischRisico;
+
+        if ($risk === 'Hoog') {
+            return redirect()->route('manager.allergie.edit', $personId)
+                ->with([
+                    'success' => 'De allergie is succesvol bijgewerkt.',
+                    'warning' => 'Voor het wijzigen van deze allergie wordt geadviseerd eerst een arts te raadplegen vanwege een hoog risico op een anafylactisch shock.'
+                ]);
+        } else {
+            // warning verwijderen als die er nog staat
+            session()->forget('warning');
+
+            return redirect()->route('manager.allergie.edit', $personId)
+                ->with('success', 'De allergie is succesvol bijgewerkt.');
+        }
     }
+
+
 }

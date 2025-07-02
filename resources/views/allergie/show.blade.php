@@ -1,83 +1,63 @@
+<!-- resources/views/allergie/show.blade.php -->
 @extends('layouts.app')
 
 @section('content')
-    <div class="mt-8 flex justify-center px-4">
-        <div class="w-full max-w-screen-md bg-white p-6 rounded shadow">
+    <div class="max-w-6xl mx-auto mt-10 p-6 bg-white rounded shadow">
+        <h2 class="text-2xl font-semibold mb-6 text-green-700">Allergieën in het gezin</h2>
 
-            <h1 class="text-xl font-semibold text-green-700 mb-6">Allergieën in het gezin</h1>
+        <table class="mb-8 w-full text-sm">
+            <tr>
+                <td class="font-medium text-gray-700 w-48">Gezinsnaam:</td>
+                <td>{{ $family->Naam }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-gray-700">Omschrijving:</td>
+                <td>{{ $family->Omschrijving ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-gray-700">Totaal aantal Personen:</td>
+                <td>{{ $family->TotaalAantalPersonen }}</td>
+            </tr>
+        </table>
 
-            {{-- Gezin info --}}
-            <table class="w-full mb-6 text-sm border border-gray-300">
-                <tbody>
-                <tr class="border-b">
-                    <td class="font-semibold px-4 py-2 w-1/3 bg-gray-100">Gezinsnaam:</td>
-                    <td class="px-4 py-2">{{ $family->Naam }}</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="font-semibold px-4 py-2 bg-gray-100">Omschrijving:</td>
-                    <td class="px-4 py-2">{{ $family->Omschrijving ?? '-' }}</td>
-                </tr>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300 text-sm">
+                <thead class="bg-gray-100 text-gray-700">
                 <tr>
-                    <td class="font-semibold px-4 py-2 bg-gray-100">Totaal aantal Personen:</td>
-                    <td class="px-4 py-2">{{ $family->TotaalAantalPersonen }}</td>
+                    <th class="px-4 py-2 border">Naam</th>
+                    <th class="px-4 py-2 border">Type Persoon</th>
+                    <th class="px-4 py-2 border">Gezinsrol</th>
+                    <th class="px-4 py-2 border">Allergie</th>
+                    <th class="px-4 py-2 border text-center">Wijzig Allergie</th>
                 </tr>
+                </thead>
+                <tbody>
+                @foreach($people as $person)
+                    <tr>
+                        <td class="px-4 py-2 border">{{ $person->Voornaam }} {{ $person->Achternaam }}</td>
+                        <td class="px-4 py-2 border">{{ $person->TypePersoon }}</td>
+                        <td class="px-4 py-2 border">
+                            {{ $person->IsVertegenwoordiger ? 'Vertegenwoordiger' : 'Leden' }}
+                        </td>
+                        <td class="px-4 py-2 border">
+                            @if($person->allergies->isNotEmpty())
+                                {{ $person->allergies->first()->Naam }}
+                            @else
+                                ---
+                            @endif
+                        </td>
+                        <td class="px-4 py-2 border text-center">
+                            <a href="{{ route('manager.allergie.edit', $person->id) }}" class="text-blue-600 hover:underline">&#9998;</a>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
+        </div>
 
-            {{-- Personen en allergieën --}}
-            <div class="overflow-x-auto bg-white border border-gray-300 rounded">
-                <table class="min-w-full text-sm text-left">
-                    <thead class="bg-gray-100 text-gray-700">
-                    <tr>
-                        <th class="px-4 py-2 border">Naam</th>
-                        <th class="px-4 py-2 border">Type Persoon</th>
-                        <th class="px-4 py-2 border">Gezinsrol</th>
-                        <th class="px-4 py-2 border">Allergie</th>
-                        <th class="px-4 py-2 border">Wijzig Allergie</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @php $foundAny = false; @endphp
-                    @foreach ($family->people as $person)
-                        @php
-                            $relevantAllergies = $allergyId
-                              ? $person->allergies->where('id', (int) $allergyId)
-                              : $person->allergies;
-                        @endphp
-
-                        @if ($relevantAllergies->isNotEmpty())
-                            @php $foundAny = true; @endphp
-                            <tr class="border-t">
-                                <td class="px-4 py-2 border">{{ $person->Voornaam }} {{ $person->Tussenvoegsel }} {{ $person->Achternaam }}</td>
-                                <td class="px-4 py-2 border">{{ $person->TypePersoon }}</td>
-                                <td class="px-4 py-2 border">{{ $person->IsVertegenwoordiger ? 'Vertegenwoordiger' : '-' }}</td>
-                                <td class="px-4 py-2 border">
-                                    @foreach ($relevantAllergies as $allergy)
-                                        {{ $allergy->Naam }}@if (!$loop->last), @endif
-                                    @endforeach
-                                </td>
-                                <td class="px-4 py-2 border text-center">
-                                    <a href="{{ route('manager.allergie.edit', $allergy->id) }}" class="text-blue-600 hover:underline">✎</a>
-                                </td>
-                            </tr>
-                        @endif
-                    @endforeach
-
-                    @unless ($foundAny)
-                        <tr>
-                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">Geen personen met deze allergie gevonden.</td>
-                        </tr>
-                    @endunless
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- Navigatie --}}
-            <div class="mt-6 flex justify-end gap-2">
-                <a href="{{ url()->previous() }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">terug</a>
-                <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">home</a>
-            </div>
-
+        <div class="mt-6 flex justify-end gap-2">
+            <a href="{{ route('manager.allergie.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Terug</a>
+            <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Home</a>
         </div>
     </div>
 @endsection

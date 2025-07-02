@@ -68,6 +68,8 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     Route::get('/allergie/{family}', [AllergyController::class, 'show'])->name('allergie.show');
     Route::get('/allergie/{allergy}/edit', [AllergyController::class, 'edit'])->name('allergie.edit');
     Route::put('/allergie/{allergy}', [AllergyController::class, 'update'])->name('allergie.update');
+    Route::get('/allergie/persoon/{person}/edit', [AllergyController::class, 'editPersonAllergy'])->name('manager.allergie.persoon.edit');
+    Route::put('/allergie/persoon/{person}/update', [AllergyController::class, 'updatePersonAllergy'])->name('manager.allergie.persoon.update');
 
 });
 
