@@ -1,116 +1,195 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <title>Wijzig Klantgegevens</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans antialiased">
+@php
+    $rep = $customer->representative->first();
+    $contact = $customer->contact->first();
+@endphp
 
-<!-- Header (zelfde als x-app-layout) -->
-<header class="bg-white shadow">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+    <x-slot name="header">
         <h2 class="text-2xl font-semibold text-blue-700 underline">
-            Wijzig Klantgegevens <?= htmlspecialchars($customer->representative->first()->Voornaam ?? '-') ?>
-                                 <?= htmlspecialchars($customer->representative->first()->Achternaam ?? '-') ?>
+            Wijzig Klant Details {{ $rep->Voornaam ?? '-' }} {{ $rep->Achternaam ?? '-' }}
         </h2>
-    </div>
-</header>
+    </x-slot>
 
-<main class="py-6">
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white shadow border border-gray-200 rounded-lg p-6">
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded p-6 mt-6">
 
-            <!-- Laravel error bag & messages -->
-            <?php
-            $rep = $customer->representative->first();
-            $contact = $customer->contact->first();
-            $errors = $errors ?? new \Illuminate\Support\MessageBag();
-            ?>
-
-            <?php if (session('error')): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-                    <?= htmlspecialchars(session('error')) ?>
+        {{-- Foutmelding --}}
+        @if(session('error'))
+            <div x-data="{ show: true }" x-show="show"
+                 x-init="setTimeout(() => show = false, 5000)"
+                 class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+                {{ session('error') }}
             </div>
-            <?php endif; ?>
+        @endif
 
-            <?php if (session('success')): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
-                    <?= htmlspecialchars(session('success')) ?>
+        {{-- Succesmelding --}}
+        @if(session('success'))
+            <div x-data="{ show: true }" x-show="show"
+                 x-init="setTimeout(() => show = false, 3000)"
+                 class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+                {{ session('success') }}
             </div>
-            <?php endif; ?>
+        @endif
 
-            <?php if ($errors->any()): ?>
+        {{-- Validatiefouten bovenaan --}}
+        @if($errors->any())
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
                 <ul class="list-disc list-inside">
-                        <?php foreach ($errors->all() as $error): ?>
-                    <li><?= htmlspecialchars($error) ?></li>
-                    <?php endforeach; ?>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
                 </ul>
             </div>
-            <?php endif; ?>
+        @endif
 
-            <form method="POST" action="<?= route('customers.update', $customer->id) ?>">
-                <?= csrf_field() ?>
-                <input type="hidden" name="_method" value="PUT">
+        <form method="POST" action="{{ route('customers.update', $customer->id) }}">
+            @csrf
+            @method('PUT')
 
-                <table class="table-auto w-full text-left border border-collapse">
-                    <tbody>
-
-                    <?php
-                    function inputRow($label, $name, $value, $type = 'text', $errors = [], $readonly = false)
-                    {
-                        $hasError = $errors->has($name);
-                        $errorClass = $hasError ? 'border-red-500' : '';
-                        $errorMessage = $hasError ? '<p class="text-red-500 text-sm mt-1">' . htmlspecialchars($errors->first($name)) . '</p>' : '';
-                        $readonlyAttr = $readonly ? 'readonly disabled class="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700"' : 'class="w-full border rounded px-3 py-2 ' . $errorClass . '"';
-
-                        echo '
-                        <tr>
-                            <th class="px-4 py-2 border font-medium">' . htmlspecialchars($label) . '</th>
-                            <td class="px-4 py-2 border">
-                                <input type="' . $type . '" name="' . $name . '" value="' . htmlspecialchars(old($name, $value)) . '" ' . $readonlyAttr . '>
-                                ' . $errorMessage . '
-                            </td>
-                        </tr>';
-                    }
-
-                    inputRow('Voornaam', 'Voornaam', $rep->Voornaam, 'text', $errors);
-                    inputRow('Tussenvoegsel', 'Tussenvoegsel', $rep->Tussenvoegsel, 'text', $errors);
-                    inputRow('Achternaam', 'Achternaam', $rep->Achternaam, 'text', $errors);
-                    inputRow('Geboortedatum', 'Geboortedatum', $rep->Geboortedatum, 'date', $errors);
-                    inputRow('Type Persoon', 'TypePersoon', ucfirst($rep->TypePersoon ?? '-'), 'text', $errors, true);
-                    inputRow('Vertegenwoordiger', 'IsVertegenwoordiger', $rep->IsVertegenwoordiger ? 'Ja' : 'Nee', 'text', $errors, true);
-                    inputRow('Straat', 'Straat', $contact->Straat, 'text', $errors);
-                    inputRow('Huisnummer', 'Huisnummer', $contact->Huisnummer, 'text', $errors);
-                    inputRow('Toevoeging', 'Toevoeging', $contact->Toevoeging, 'text', $errors);
-                    inputRow('Postcode', 'Postcode', $contact->Postcode, 'text', $errors);
-                    inputRow('Woonplaats', 'Woonplaats', $contact->Woonplaats, 'text', $errors);
-                    inputRow('E-mailadres', 'Email', $contact->Email, 'email', $errors);
-                    inputRow('Mobiel', 'Mobiel', $contact->Mobiel, 'text', $errors);
-                    ?>
-
-                    </tbody>
-                </table>
-
-                <!-- Knoppen -->
-                <div class="flex justify-between mt-6">
-                    <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-                        Opslaan
-                    </button>
-                    <div class="space-x-2">
-                        <a href="<?= route('customers.show', $customer->id) ?>"
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Terug</a>
-                        <a href="<?= route('dashboard') ?>"
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Home</a>
+            <div class="space-y-4">
+                {{-- Voornaam --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Voornaam</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Voornaam" value="{{ old('Voornaam', $rep->Voornaam ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Voornaam') border-red-500 @enderror">
+                        @error('Voornaam') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
-            </form>
 
-        </div>
+                {{-- Tussenvoegsel --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Tussenvoegsel</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Tussenvoegsel" value="{{ old('Tussenvoegsel', $rep->Tussenvoegsel ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Tussenvoegsel') border-red-500 @enderror">
+                        @error('Tussenvoegsel') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Achternaam --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Achternaam</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Achternaam" value="{{ old('Achternaam', $rep->Achternaam ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Achternaam') border-red-500 @enderror">
+                        @error('Achternaam') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Geboortedatum --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Geboortedatum</label>
+                    <div class="w-1/2">
+                        <input type="date" name="Geboortedatum" value="{{ old('Geboortedatum', $rep->Geboortedatum ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Geboortedatum') border-red-500 @enderror">
+                        @error('Geboortedatum') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Type Persoon (readonly) --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Type Persoon</label>
+                    <div class="w-1/2">
+                        <input type="text" disabled
+                               value="@if($rep->TypePersoon === 'manager') Manager @elseif($rep->TypePersoon === 'employee') Werknemer @elseif($rep->TypePersoon === 'volunteer') Vrijwilliger @else - @endif"
+                               class="w-full bg-gray-100 border rounded px-3 py-2 text-gray-700">
+                        <input type="hidden" name="TypePersoon" value="{{ $rep->TypePersoon }}">
+                    </div>
+                </div>
+
+                {{-- Vertegenwoordiger (readonly) --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Vertegenwoordiger</label>
+                    <div class="w-1/2">
+                        <input type="text" disabled value="{{ $rep->IsVertegenwoordiger ? 'Ja' : 'Nee' }}"
+                               class="w-full bg-gray-100 border rounded px-3 py-2 text-gray-700">
+                        <input type="hidden" name="IsVertegenwoordiger" value="{{ $rep->IsVertegenwoordiger }}">
+                    </div>
+                </div>
+
+                {{-- Straatnaam --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Straatnaam</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Straat" value="{{ old('Straat', $contact->Straat ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Straat') border-red-500 @enderror">
+                        @error('Straat') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Huisnummer --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Huisnummer</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Huisnummer" value="{{ old('Huisnummer', $contact->Huisnummer ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Huisnummer') border-red-500 @enderror">
+                        @error('Huisnummer') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Toevoeging --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Toevoeging</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Toevoeging" value="{{ old('Toevoeging', $contact->Toevoeging ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Toevoeging') border-red-500 @enderror">
+                        @error('Toevoeging') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Postcode --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Postcode</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Postcode" value="{{ old('Postcode', $contact->Postcode ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Postcode') border-red-500 @enderror">
+                        @error('Postcode') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Woonplaats --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Woonplaats</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Woonplaats" value="{{ old('Woonplaats', $contact->Woonplaats ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Woonplaats') border-red-500 @enderror">
+                        @error('Woonplaats') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Email --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">E-mail</label>
+                    <div class="w-1/2">
+                        <input type="email" name="Email" value="{{ old('Email', $contact->Email ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Email') border-red-500 @enderror">
+                        @error('Email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                {{-- Mobiel --}}
+                <div class="flex items-start border-b pb-4">
+                    <label class="w-1/2 font-bold py-2 pr-4">Mobiel</label>
+                    <div class="w-1/2">
+                        <input type="text" name="Mobiel" value="{{ old('Mobiel', $contact->Mobiel ?? '') }}"
+                               class="w-full border rounded px-3 py-2 @error('Mobiel') border-red-500 @enderror">
+                        @error('Mobiel') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            {{-- Actieknoppen --}}
+            <div class="flex justify-between mt-6">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow">
+                    Wijzig Klant Details
+                </button>
+                <div class="space-x-2">
+                    <a href="{{ route('customers.show', $customer->id) }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Terug</a>
+                    <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Home</a>
+                </div>
+            </div>
+        </form>
     </div>
-</main>
 
-</body>
-</html>
