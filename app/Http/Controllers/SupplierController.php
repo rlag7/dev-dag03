@@ -29,15 +29,21 @@ class SupplierController extends Controller
         $suppliers = collect(); // default lege collectie
         $message = null;
 
-        // ✅ Speciale regel: Donor geeft altijd foutmelding
-        if ($type === 'Donor') {
-            $message = 'Er zijn geen leveranciers bekend van het geselecteerde leverancierstype';
-        } else {
-            $suppliers = Supplier::where('LeverancierType', $type)->get();
-
-            if ($suppliers->isEmpty()) {
+        try {
+            // ✅ Speciale regel: Donor geeft altijd foutmelding
+            if ($type === 'Donor') {
                 $message = 'Er zijn geen leveranciers bekend van het geselecteerde leverancierstype';
+            } else {
+                $suppliers = Supplier::where('LeverancierType', $type)->get();
+
+                if ($suppliers->isEmpty()) {
+                    $message = 'Er zijn geen leveranciers bekend van het geselecteerde leverancierstype';
+                }
             }
+        } catch (\Exception $e) {
+            // In productietoepassingen kun je hier loggen of een aangepaste foutmelding tonen
+            // Log::error('Fout bij het filteren van leveranciers: ' . $e->getMessage());
+            $message = 'Er is een fout opgetreden bij het filteren van leveranciers.';
         }
 
         return view('supplier.index', [
@@ -46,6 +52,7 @@ class SupplierController extends Controller
             'message' => $message,
         ]);
     }
+
 
 
 
