@@ -1,10 +1,9 @@
-<!-- resources/views/allergie/show.blade.php -->
 @extends('layouts.app')
 
 @section('content')
     <div class="max-w-6xl mx-auto mt-10 p-6 bg-white rounded shadow">
         <h2 class="text-2xl font-semibold mb-6 text-green-700">Allergieën in het gezin</h2>
-
+        {{--Tabel boven de overzicht van show--}}
         <table class="mb-8 w-full text-sm">
             <tr>
                 <td class="font-medium text-gray-700 w-48">Gezinsnaam:</td>
@@ -19,7 +18,7 @@
                 <td>{{ $family->TotaalAantalPersonen }}</td>
             </tr>
         </table>
-
+       {{--main table van allergie--}}
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-300 text-sm">
                 <thead class="bg-gray-100 text-gray-700">
@@ -54,7 +53,7 @@
                 </tbody>
             </table>
         </div>
-
+        {{--Home en terug knop--}}
         <div class="mt-6 flex justify-end gap-2">
             <a href="{{ route('manager.allergie.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Terug</a>
             <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Home</a>

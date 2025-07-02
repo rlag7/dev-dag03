@@ -10,15 +10,13 @@
 
     <div class="mt-8 flex justify-center px-4">
         <div class="w-full max-w-screen-xl bg-white p-6 rounded shadow">
-
-            {{-- Titel + Filter --}}
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h1 class="text-xl font-semibold text-green-700">Overzicht gezinnen met allergieën</h1>
 
                 <form method="GET" action="{{ route('manager.allergie.index') }}" class="flex flex-col sm:flex-row items-center gap-3">
                     <label for="allergy_id" class="text-sm font-medium">Selecteer Allergie</label>
                     <select name="allergy_id" id="allergy_id" class="border rounded px-3 py-2">
-                        <option value="">-- Alle allergieën --</option>
+                        <option value="">Alle allergieënㅤㅤ</option>
                         @foreach($allergies as $allergy)
                             <option value="{{ $allergy->id }}" {{ request('allergy_id') == $allergy->id ? 'selected' : '' }}>
                                 {{ $allergy->Naam }}
@@ -31,14 +29,14 @@
                 </form>
             </div>
 
-            {{-- Geen resultaten --}}
+            {{-- geen resultaten --}}
             @if($filtered && $families->isEmpty())
                 <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
                     Er zijn geen gezinnen bekend die de geselecteerde allergie hebben.
                 </div>
             @endif
 
-            {{-- Tabel --}}
+            {{-- overzicht tabel --}}
             <div class="overflow-x-auto bg-white rounded shadow border border-gray-300">
                 <table class="min-w-full text-sm text-left">
                     <thead class="bg-gray-100 text-gray-700">
@@ -79,7 +77,7 @@
                 </table>
             </div>
 
-            {{-- Home knop --}}
+            {{-- Rechtsonder knop --}}
             <div class="mt-6 flex justify-end">
                 <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Home

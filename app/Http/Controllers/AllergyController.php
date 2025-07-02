@@ -9,6 +9,7 @@ use App\Models\Person;
 
 class AllergyController extends Controller
 {
+    // lijst gezinnen met allergieën
     public function index(Request $request)
     {
         $allergies = Allergy::all();
@@ -34,6 +35,7 @@ class AllergyController extends Controller
         ]);
     }
 
+    // toon gezin en personen met allergieën
     public function show(Family $family, Request $request)
     {
         $allergyId = $request->get('allergy_id');
@@ -44,18 +46,17 @@ class AllergyController extends Controller
         return view('allergie.show', compact('family', 'people', 'allergy', 'allergyId'));
     }
 
-
-
+    // formulier wijzig allergie
     public function edit($personId)
     {
         $person = Person::with('allergies')->findOrFail($personId);
-        $currentAllergy = $person->allergies->first(); // We gaan uit van 1 actieve allergie
+        $currentAllergy = $person->allergies->first();
         $allergies = Allergy::all();
 
         return view('allergie.edit', compact('person', 'allergies', 'currentAllergy'));
     }
 
-// Verwerk de wijziging van een allergie
+    // verwerk update allergie
     public function update(Request $request, $personId)
     {
         $validated = $request->validate([
@@ -74,14 +75,9 @@ class AllergyController extends Controller
                     'success' => 'De allergie is succesvol bijgewerkt.',
                     'warning' => 'Voor het wijzigen van deze allergie wordt geadviseerd eerst een arts te raadplegen vanwege een hoog risico op een anafylactisch shock.'
                 ]);
-        } else {
-            // warning verwijderen als die er nog staat
-            session()->forget('warning');
-
-            return redirect()->route('manager.allergie.edit', $personId)
-                ->with('success', 'De allergie is succesvol bijgewerkt.');
         }
+
+        return redirect()->route('manager.allergie.edit', $personId)
+            ->with('success', 'De allergie is succesvol bijgewerkt.');
     }
-
-
 }

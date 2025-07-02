@@ -51,6 +51,7 @@
             </div>
         </form>
 
+        {{--script voor warning message popup--}}
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const select = document.getElementById('allergy_id');
