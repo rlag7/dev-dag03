@@ -198,9 +198,9 @@
                 </button>
                 <div class="space-x-2">
                     <a href="{{ route('customers.show', $customer->id) }}"
-                       class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Terug</a>
+                       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-gray-700">Terug</a>
                     <a href="{{ route('dashboard') }}"
-                       class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Home</a>
+                       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-gray-700">Home</a>
                 </div>
             </div>
 
