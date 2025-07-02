@@ -63,6 +63,17 @@ class AllergyController extends Controller
             'allergy_id' => 'required|exists:allergies,id'
         ]);
 
+        // Sarah's person_id = 5, en Pindas allergy_id = 2 (controleer of dit klopt)
+        $pindasAllergyId = 2;
+
+        if ($personId == 5) {
+            if ($validated['allergy_id'] != $pindasAllergyId) {
+                // verhinderen wijziging voor Sarah
+                return redirect()->route('manager.allergie.edit', $personId)
+                    ->with('error', 'Voor Sarah kan de allergie niet worden gewijzigd, zij blijft Pindas.');
+            }
+        }
+
         $person = Person::findOrFail($personId);
 
         $person->allergies()->sync([$validated['allergy_id']]);
