@@ -9,20 +9,28 @@
 <div class="w-full max-w-6xl mx-auto text-left">
 
     <form method="POST" action="{{ route('manager.supplier.filter') }}"
-          class="bg-white shadow-lg rounded p-4 relative">
+          class="bg-white shadow-lg rounded p-4 relative" id="filterForm">
         @csrf
 
-        {{-- Titel + filters inline maar gescheiden --}}
+        {{-- Server-side foutmelding --}}
+        @error('LeverancierType')
+        <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+            {{ $message }}
+        </div>
+        @enderror
+
+        {{-- Titel + filters inline --}}
         <div class="flex justify-between items-center mb-4 flex-wrap gap-4">
             <h2 class="text-2xl font-semibold text-green-700 underline">
                 Overzicht Leveranciers
             </h2>
 
             <div class="flex items-center gap-2">
-                <select name="LeverancierType" class="border border-gray-300 p-2 rounded">
+                <select name="LeverancierType" id="LeverancierType"
+                        class="border border-gray-300 p-2 rounded">
                     <option value="">Selecteer Leverancier Type</option>
                     @foreach($types as $type)
-                        <option value="{{ $type }}" {{ request('LeverancierType') == $type ? 'selected' : '' }}>
+                        <option value="{{ $type }}" {{ old('LeverancierType', request('LeverancierType')) == $type ? 'selected' : '' }}>
                             {{ $type }}
                         </option>
                     @endforeach
@@ -71,7 +79,7 @@
                 @empty
                     <tr>
                         <td colspan="7" class="px-4 py-3 text-center bg-yellow-100 text-yellow-700">
-                            Geen leveranciers gevonden voor het geselecteerde type.
+                            Er zijn geen leveranciers bekend van het geselecteerde leverancierstype
                         </td>
                     </tr>
                 @endforelse
@@ -87,5 +95,20 @@
         </div>
     </form>
 </div>
+
+{{-- ✅ Client-side validatie --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('filterForm');
+        const select = document.getElementById('LeverancierType');
+
+        form.addEventListener('submit', function (e) {
+            if (!select.value) {
+                e.preventDefault();
+                alert('Selecteer een leverancierstype voordat je probeert te filteren.');
+            }
+        });
+    });
+</script>
 </body>
 </html>
