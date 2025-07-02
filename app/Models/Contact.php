@@ -17,6 +17,8 @@ class Contact extends Model
             ->using(\App\Models\ContactFamily::class);
     }
 
+
+
     public function suppliers()
     {
         return $this->belongsToMany(Supplier::class, 'contact_supplier')
