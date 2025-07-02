@@ -102,12 +102,13 @@ class CustomerController extends Controller
                 Rule::unique('contacts', 'Mobiel')->ignore($contactId),
             ],
         ], [
+            'Voornaam.max' => 'Voornaam mag maximaal 255 tekens bevatten.',
             'Voornaam.required' => 'Voornaam is verplicht.',
             'Voornaam.regex' => 'Voornaam mag geen cijfers bevatten.',
             'Tussenvoegsel.regex' => 'Tussenvoegsel mag geen cijfers of streepjes bevatten.',
             'Achternaam.required' => 'Achternaam is verplicht.',
             'Achternaam.regex' => 'Achternaam mag geen cijfers bevatten.',
-            'Geboortedatum.before_or_equal' => 'Je moet minstens 8 jaar oud zijn.',
+            'Geboortedatum.before_or_equal' => 'Je moet minstens 18 jaar oud zijn.',
             'Geboortedatum.after_or_equal' => 'Geboortedatum is te oud (maximaal 120 jaar geleden).',
             'Huisnummer.numeric' => 'Huisnummer moet een getal zijn.',
             'Huisnummer.min' => 'Huisnummer moet minstens 1 zijn.',
@@ -149,7 +150,7 @@ class CustomerController extends Controller
             }
 
             return redirect()
-                ->route('customers.show', $customer->id)
+                ->back()
                 ->with('success', 'De klantgegevens zijn succesvol bijgewerkt.');
         } catch (\Exception $e) {
             return redirect()
