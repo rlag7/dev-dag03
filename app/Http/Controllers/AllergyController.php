@@ -60,22 +60,25 @@ class AllergyController extends Controller
     public function update(Request $request, $personId)
     {
         $validated = $request->validate([
-            'allergy_id' => 'required|exists:allergies,id'
+            'allergy_id' => 'required|exists:allergies,id',
+            'confirm_change' => 'nullable|boolean',
         ]);
 
-        // Sarah's person_id = 5, en Pindas allergy_id = 2 (controleer of dit klopt)
         $pindasAllergyId = 2;
 
         if ($personId == 5) {
             if ($validated['allergy_id'] != $pindasAllergyId) {
-                // verhinderen wijziging voor Sarah
-                return redirect()->route('manager.allergie.edit', $personId)
-                    ->with('error', 'Voor Sarah kan de allergie niet worden gewijzigd, zij blijft Pindas.');
+                if (!$request->boolean('confirm_change')) {
+                    return redirect()->route('manager.allergie.edit', $personId)
+                        ->with([
+                            'warning' => 'Voor Sarah wordt geadviseerd allergie alleen na bevestiging te wijzigen vanwege hoog risico.',
+                            'confirm_needed' => true,
+                        ]);
+                }
             }
         }
 
         $person = Person::findOrFail($personId);
-
         $person->allergies()->sync([$validated['allergy_id']]);
 
         $risk = Allergy::find($validated['allergy_id'])->AnafylactischRisico;
@@ -91,4 +94,5 @@ class AllergyController extends Controller
         return redirect()->route('manager.allergie.edit', $personId)
             ->with('success', 'De allergie is succesvol bijgewerkt.');
     }
+
 }
